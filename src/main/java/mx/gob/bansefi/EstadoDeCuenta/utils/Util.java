@@ -1,4 +1,4 @@
-package mx.gob.namsefi.ExtadoDeCuenta.utils;
+package mx.gob.bansefi.EstadoDeCuenta.utils;
 import org.springframework.stereotype.Component;
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -14,10 +14,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-/**
- * Autor: Jose Angel Hernandez Gonzalez
- * Fecha: 29/03/2017
- */
+
 @Component
 public final class Util<T> {
 
