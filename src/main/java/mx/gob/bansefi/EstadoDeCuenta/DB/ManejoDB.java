@@ -42,7 +42,7 @@ public class ManejoDB {
 	            return null;
 	        }
 	    }
-	 
+	 /*metodo de insercion de unpdf a la base de datos*/
 	public void insertPDF(Connection conn,String filename) {
 	        int len;
 	        String query;
@@ -72,6 +72,8 @@ public class ManejoDB {
 	            e.printStackTrace();
 	        }
 	    }
+	
+	/*metodo que sustrae los pdfs que se solicitan*/
 	 public void getPDFData(Connection conn) {
          
 	        byte[] fileBytes;

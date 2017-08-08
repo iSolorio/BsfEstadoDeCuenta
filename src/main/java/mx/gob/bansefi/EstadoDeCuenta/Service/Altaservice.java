@@ -17,6 +17,7 @@ public class Altaservice {
 	private Util util;
 	@Value("${url.database}")
 	private String urlDataBase;
+ /* servicio basico de prueba*/
 	public void consultaEstado()
 	{
 		System.out.println("Funciona");

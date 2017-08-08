@@ -38,6 +38,7 @@ dependencies {
     compile group: 'com.itextpdf', name: 'itextpdf', version: '5.0.6'
     // https://mvnrepository.com/artifact/net.sf.jasperreports/jasperreports
     compile group: 'net.sf.jasperreports', name: 'jasperreports', version: '6.1.0'
+      compile 'org.springframework.batch:spring-batch-core:3.0.8.RELEASE'
     
 	
 	
