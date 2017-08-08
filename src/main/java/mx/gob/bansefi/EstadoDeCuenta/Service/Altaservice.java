@@ -18,5 +18,6 @@ public class Altaservice {
 	public void consultaEstado()
 	{
 		System.out.println("Funciona");
+		manejodb.dbConnect();
 	}
 }

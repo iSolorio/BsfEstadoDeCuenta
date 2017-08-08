@@ -2,9 +2,13 @@ package mx.gob.bansefi.EstadoDeCuenta.DB;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -20,13 +24,10 @@ public class ManejoDB {
 	@Value("${url.database}")
 	private String urlDatabase;
 	/*Metodo de conexion a la base de datos*/
-	 public Connection dbConnect(String db_connect_string,
-	            String db_userid, String db_password) {
+	 public Connection dbConnect() {
 	        try {
 	            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-	            Connection conn = DriverManager.getConnection(
-	                    db_connect_string, db_userid, db_password);
-	             
+	            Connection conn = DriverManager.getConnection(urlDatabase, databaseUsuario, databasePassword);
 	            System.out.println("connected");
 	            return conn;
 	             
@@ -52,6 +53,27 @@ public class ManejoDB {
 	            //method to insert a stream of bytes
 	            pstmt.setBinaryStream(3, fis, len); 
 	            pstmt.executeUpdate();
+	             
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+	    }
+	 public void getPDFData(Connection conn) {
+         
+	        byte[] fileBytes;
+	        String query;
+	        try {
+	            query = 
+	              "select data from tableimage where filename like '%.pdf%'";
+	            Statement state = conn.createStatement();
+	            ResultSet rs = state.executeQuery(query);
+	            if (rs.next()) {
+	                fileBytes = rs.getBytes(1);
+	                OutputStream targetFile=  new FileOutputStream(
+	                        "d://servlet//jdbc//newtest.pdf");
+	                targetFile.write(fileBytes);
+	                targetFile.close();
+	            }
 	             
 	        } catch (Exception e) {
 	            e.printStackTrace();
