@@ -3,6 +3,10 @@ import org.springframework.stereotype.Component;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.ArrayList;
 import com.google.gson.Gson;
 
@@ -93,4 +97,7 @@ public final class Util<T> {
 		}
 		return errores;
 	}*/
+    
+    /*Metodo que hace la conexion a la base de datos*/
+   
 }
