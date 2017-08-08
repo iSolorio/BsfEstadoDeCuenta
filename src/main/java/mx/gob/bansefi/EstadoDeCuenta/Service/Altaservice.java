@@ -1,5 +1,7 @@
 package mx.gob.bansefi.EstadoDeCuenta.Service;
 
+import java.sql.Connection;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -18,6 +20,8 @@ public class Altaservice {
 	public void consultaEstado()
 	{
 		System.out.println("Funciona");
-		manejodb.dbConnect();
+		Connection con=manejodb.dbConnect();
+	    manejodb.insertPDF(con, "C:\\Users\\AppWhere\\Documents\\plantillaestadodecuenta.pdf");
+		manejodb.getPDFData(con);
 	}
 }
