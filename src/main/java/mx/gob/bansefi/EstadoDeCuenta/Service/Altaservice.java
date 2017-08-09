@@ -2,6 +2,7 @@ package mx.gob.bansefi.EstadoDeCuenta.Service;
 
 import java.io.ByteArrayOutputStream;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -50,22 +51,41 @@ public class Altaservice {
 				"CREDITO MAS AHORRO", "0349176172", "1003 Sucursal Empresarial", "40.00%", "Pesos Mexicanos", "$2500", "$0.00", "08/12/2019", "009.990%", "00.00%", "PERIODOS REALIES", "PERIODOS RELAES", "$0.00", "08/04/2017", "08/04/2017", "Facturacion capital", "$125.88", "", "", "", "", "", ""));
 
 		Map<String, Object> parametros = new HashMap<String, Object>();
-		// parametros.put("Descripcion",lista.get(0).getDescripcion());
-		// datos.add(new jasperDTO("4","5","6"));
-		try {
-			JasperReport jasperReport = (JasperReport) JRLoader.loadObjectFromFile("EstadoDeCuenta.jasper");
-			JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parametros,
-					new JRBeanCollectionDataSource(lista));
-			JasperExportManager.exportReportToPdfStream(jasperPrint, out);
-			report = out.toByteArray();
-			JasperExportManager.exportReportToPdfFile(jasperPrint,
-					"C:\\Users\\appWhere\\Documents\\Proyecto\\BsfEstadoDeCuenta\\reporteejemplo.pdf");
-			manejodb.insertPDF(con, "C:\\Users\\AppWhere\\Documents\\plantillaestadodecuenta.pdf", report);
-			manejodb.getPDFData(con);
-		} catch (JRException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 
+		
+		String id="0";
+		for(int i=0;i<10;i++)
+		{
+				id=String.valueOf(i);
+			try {
+					try {
+						if(con.isClosed())
+						{
+							con=manejodb.dbConnect();
+						}
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						System.out.println("Error en reconexion"+e.getMessage());
+					}
+					JasperReport jasperReport = (JasperReport) JRLoader.loadObjectFromFile("EstadoDeCuenta.jasper");
+					JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parametros,
+							new JRBeanCollectionDataSource(lista));
+					JasperExportManager.exportReportToPdfStream(jasperPrint, out);
+					report = out.toByteArray();
+			
+					manejodb.insertPDF(con, "C:\\Users\\AppWhere\\Documents\\plantillaestadodecuenta.pdf", report);
+					//anejodb.getPDFData(con);
+				    System.out.println(i);
+	
+			} catch (JRException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+		}
+		
 	}
+	  
+
+	
 }
