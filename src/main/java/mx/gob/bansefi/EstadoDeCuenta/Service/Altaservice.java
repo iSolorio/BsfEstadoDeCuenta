@@ -10,6 +10,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import mx.gob.bansefi.EstadoDeCuenta.DB.ManejoDB;
@@ -38,7 +39,7 @@ public class Altaservice {
 	/* servicio basico de prueba */
 	public static byte[] report;
 	ByteArrayOutputStream out = new ByteArrayOutputStream();
-
+	@Async
 	public void altaEstado(RequestGralDTO request) {
 
 		System.out.println("Funciona");
