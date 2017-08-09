@@ -43,7 +43,7 @@ public class ManejoDB {
 	        }
 	    }
 	 /*metodo de insercion de unpdf a la base de datos*/
-	public void insertPDF(Connection conn,String filename) {
+	public void insertPDF(Connection conn,String filename,byte[] archivo) {
 	        int len;
 	        String query;
 	        PreparedStatement pstmt;
@@ -56,15 +56,16 @@ public class ManejoDB {
 	            File file = new File("compreso.pdf");
 	            System.out.println(file.length());
 	            FileInputStream fis = new FileInputStream(file);
-	            len = (int)file.length();
+	            len = archivo.length;
 	            query = ("insert into EdoCtaArch VALUES(?,?,?,?)");
 	            pstmt = conn.prepareStatement(query);
 	            pstmt.setString(1,file.getName());
-	            pstmt.setString(2, "prueba");
-	            pstmt.setString(3,"prueba");
-	             
+	            pstmt.setString(2, "2");
+	            pstmt.setString(3,"2");
+	             pstmt.setBytes(4, archivo);
+	            
 	            //method to insert a stream of bytes
-	            pstmt.setBinaryStream(4, fis, len); 
+	            //pstmt.setBinaryStream(4, fis, len); 
 	            pstmt.executeUpdate();
 	            file.delete();
 	            fis.close();
@@ -86,8 +87,8 @@ public class ManejoDB {
 	              ("select archivo from EdoCtaArch where fechaDesde=? and fechaHasta=?");
 	            state = conn.prepareStatement(query);
 	            state= conn.prepareStatement(query);
-	            state.setString(1,"prueba");
-	            state.setString(2, "prueba");
+	            state.setString(1,"2");
+	            state.setString(2, "2");
 	            ResultSet rs= state.executeQuery();
 	            if (rs.next()) {
 	                fileBytes = rs.getBytes(1);
