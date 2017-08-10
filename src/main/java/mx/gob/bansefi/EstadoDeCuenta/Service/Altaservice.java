@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.sql.DataSource;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
@@ -38,13 +40,14 @@ public class Altaservice {
 	private String urlDataBase;
 	/* servicio basico de prueba */
 	public static byte[] report;
+	DataSource dataSource = ManejoDB.getDataSource();
 	ByteArrayOutputStream out = new ByteArrayOutputStream();
 	@Async
 	public void altaEstado(RequestGralDTO request) {
 
 		System.out.println("Funciona");
 		// util.callRestPost( request, uri);
-		Connection con = manejodb.dbConnect();
+		
 		ArrayList<jasperDTO> datos = new ArrayList<jasperDTO>();
 		List<jasperDTO> lista = new ArrayList<jasperDTO>();
 		// lista.add(new jasperDTO("1", "2", "3"));
@@ -59,15 +62,7 @@ public class Altaservice {
 		{
 				id=String.valueOf(i);
 			try {
-					try {
-						if(con.isClosed())
-						{
-							con=manejodb.dbConnect();
-						}
-					} catch (SQLException e) {
-						// TODO Auto-generated catch block
-						System.out.println("Error en reconexion"+e.getMessage());
-					}
+					Connection con = dataSource.getConnection();
 					JasperReport jasperReport = (JasperReport) JRLoader.loadObjectFromFile("EstadoDeCuenta.jasper");
 					JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parametros,
 							new JRBeanCollectionDataSource(lista));
@@ -77,8 +72,9 @@ public class Altaservice {
 					manejodb.insertPDF(con, "C:\\Users\\AppWhere\\Documents\\plantillaestadodecuenta.pdf", report);
 					//anejodb.getPDFData(con);
 				    System.out.println(i);
-	
-			} catch (JRException e) {
+				    con.close();
+				   
+			} catch (JRException | SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}

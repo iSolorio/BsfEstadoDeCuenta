@@ -10,6 +10,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
+import javax.sql.DataSource;
+
 import org.assertj.core.util.Files;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,6 +20,8 @@ import org.springframework.stereotype.Component;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfStamper;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 
 @Component
 public class ManejoDB  {
@@ -29,8 +33,27 @@ public class ManejoDB  {
 	private String databaseName;
 	@Value("${url.database}")
 	private String urlDatabase;
-	
+	private static DataSource datasource;
+	public static DataSource getDataSource()
+    {
+            if(datasource == null)
+            {
+                HikariConfig config = new HikariConfig();
+	            config.setJdbcUrl("jdbc:sqlserver://172.26.9.103;databaseName=BsfAcnSucursales");
+	            config.setUsername("usrBsfWeb");
+	            config.setPassword("Bansefi#2016");
+	            config.setMaximumPoolSize(100);
+	            config.setAutoCommit(false);
+	            config.addDataSourceProperty("cachePrepStmts", "true");
+	            config.addDataSourceProperty("prepStmtCacheSize", "250");
+	            config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
+	            datasource = new HikariDataSource(config);
 
+            }
+
+            return datasource;
+
+    }
 	/* Metodo de conexion a la base de datos */
 	public Connection dbConnect() {
 		try {
