@@ -11,8 +11,10 @@ import java.sql.ResultSet;
 
 import javax.sql.DataSource;
 
+
 import org.castor.core.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -25,47 +27,50 @@ import mx.gob.bansefi.EstadoDeCuenta.utils.Util;
 
 @Component
 public class ManejoDB {
+	@Value("${url.database}")
+	private String urlDatabase;
+	@Value("${database.name}")
+	private String databaseName;
 	@Value("${database.usuario}")
 	private  String databaseUsuario;
 	@Value("${database.password}")
-	private  String databasePassword;
-	@Value("${database.name}")
-	private String databaseName;
-	@Value("${database.url}")
-	private   String urlDatabase;
-	@Value("${database.pool}")
-	private  int databasePool;
-	@Value("${query.insercion}")
-	private static String queryInsercion;
-	@Value("${query.consulta}")
-	private static String queryConsulta;
+private String databasePassword;
 	
+	@Value("${spring.datasource.url}")
+	static String urlSpringdatasourceurl;
+	@Value("${spring.datasource.hikari.username}")
+	static String urlSpringdatasourceusername;
+	@Value("${spring.datasource.hikari.password}")
+	static String urlSpringdatasourcepassword;
+	@Value("${spring.datasource.hikari.maximum-pool-size}")
+	static int urlMaximumpoolsize;
 	
-	private DataSource datasource;
-
+	@Value("${query.insert}")
+	private String urlQueryInsert;
+	
+	private static DataSource datasource;
+	
 	@Autowired
 	private Util util;
 	/*Este metodo inicializa el pool database*/
-	public  DataSource getDataSource()
-    {
-			
-            if(datasource == null)
-            {
-                HikariConfig config = new HikariConfig();
-	            config.setJdbcUrl( urlDatabase);
-	            config.setUsername(databaseUsuario);
-	            config.setPassword(databasePassword);
-	            config.setMaximumPoolSize(100);
-	            config.setAutoCommit(false);
-	            config.addDataSourceProperty("cachePrepStmts", "true");
-	            config.addDataSourceProperty("prepStmtCacheSize", "250");
-	            config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
-	            datasource = new HikariDataSource(config);
-            }
+	public static DataSource getDataSource() {
+		if (datasource == null) {
+			HikariConfig config = new HikariConfig();
+			config.setJdbcUrl(urlSpringdatasourceurl);
+			config.setUsername(urlSpringdatasourceusername);
+			config.setPassword(urlSpringdatasourcepassword);
+			config.setMaximumPoolSize(urlMaximumpoolsize);
+			config.setAutoCommit(false);
+			config.addDataSourceProperty("cachePrepStmts", "true");
+			config.addDataSourceProperty("prepStmtCacheSize", "250");
+			config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
+			datasource = new HikariDataSource(config);
 
-            return datasource;
+		}
 
-    }
+		return datasource;
+
+	}
 
 
 	/* metodo de insercion de unpdf a la base de datos */
@@ -78,8 +83,8 @@ public class ManejoDB {
 			archivo=util.comprimir(archivo);
 			len = archivo.length;
 			System.out.println("Tamaño del archivo:"+len);
-			query = (queryInsercion);
-			if(StringUtils.countOccurrencesOf(queryInsercion, "?")<4)
+			query = ("coloca los querys ");
+			if(StringUtils.countOccurrencesOf(query, "?")<4)
 			{
 				
 				pstmt = conn.prepareStatement(query);
@@ -109,7 +114,7 @@ public class ManejoDB {
 	 public ResponseDTO getPDFData(Connection conn) {
          ResponseDTO res=new ResponseDTO();
 	        byte[] fileBytes;
-	        String query=queryConsulta;
+	        String query="coloca los querys";
 	       
 	         
 	        try {
@@ -146,7 +151,7 @@ public class ManejoDB {
 	        }
 	        return null;
 	    }
-
-
+	
+	
 
 }

@@ -8,15 +8,20 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RequestGralDTO {
-	
-	@Getter @Setter
+
+	@Getter
+	@Setter
 	private String usuario;
-	@Getter @Setter
+	@Getter
+	@Setter
 	private String password;
-	@Getter @Setter
+	@Getter
+	@Setter
 	private String idInternoPe;
-	@Getter @Setter
+	@Getter
+	@Setter
 	private String entidad;
-	@Getter @Setter
+	@Getter
+	@Setter
 	private String terminal;
 }

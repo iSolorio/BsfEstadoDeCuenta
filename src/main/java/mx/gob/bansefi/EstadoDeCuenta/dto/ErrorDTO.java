@@ -12,9 +12,11 @@ import lombok.Setter;
 @NoArgsConstructor
 public class ErrorDTO {
 
-    @Getter @Setter
-    private String TEXT_CODE;
-    @Getter @Setter
-    private String TEXT_ARG1;
+	@Getter
+	@Setter
+	private String TEXT_CODE;
+	@Getter
+	@Setter
+	private String TEXT_ARG1;
 
 }

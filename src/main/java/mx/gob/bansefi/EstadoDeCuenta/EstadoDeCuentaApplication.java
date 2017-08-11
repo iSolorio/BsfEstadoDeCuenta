@@ -17,18 +17,20 @@ import mx.gob.bansefi.EstadoDeCuenta.DB.ManejoDB;
 public class EstadoDeCuentaApplication {
 	@Autowired
 	private ManejoDB conexiones;
+
 	public static void main(String[] args) {
 		ConfigurableApplicationContext context = SpringApplication.run(EstadoDeCuentaApplication.class, args);
-		
+
 	}
-	 @Bean
-	    public Executor asyncExecutor() {
-	        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-	        executor.setCorePoolSize(10);
-	        executor.setMaxPoolSize(10);
-	        executor.setQueueCapacity(500);
-	        executor.setThreadNamePrefix("GithubLookup-");
-	        executor.initialize();
-	        return executor;
-	    }
+
+	@Bean
+	public Executor asyncExecutor() {
+		ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+		executor.setCorePoolSize(10);
+		executor.setMaxPoolSize(10);
+		executor.setQueueCapacity(500);
+		executor.setThreadNamePrefix("GithubLookup-");
+		executor.initialize();
+		return executor;
+	}
 }

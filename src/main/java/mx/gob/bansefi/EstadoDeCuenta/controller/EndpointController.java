@@ -15,7 +15,7 @@ import mx.gob.bansefi.EstadoDeCuenta.dto.ResponseDTO;
 public class EndpointController {
 	@Autowired
 	private Altaservice altaService;
-	
+
 	/*Endpoint para probar*/
 	@RequestMapping(value ="consultaEstadoCuenta", method = RequestMethod.POST)
 	public ResponseDTO pruebal(@RequestBody RequestGralDTO request){
