@@ -8,6 +8,10 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.zip.DataFormatException;
+import java.util.zip.Deflater;
+import java.util.zip.Inflater;
+
 import com.google.gson.Gson;
 
 import org.json.simple.JSONObject;
@@ -94,7 +98,34 @@ public final class Util<T> {
 		}
 		return errores;
 	}*/
-    
-    /*Metodo que hace la conexion a la base de datos*/
+    /*Metodo de compresion  de  byte array para el guardado en la base de datos*/
+    public static byte[] comprimir(byte[] data) throws IOException {  
+    	   Deflater deflater = new Deflater();  
+    	   deflater.setInput(data);  
+    	   ByteArrayOutputStream outputStream = new ByteArrayOutputStream(data.length);   
+    	   deflater.finish();  
+    	   byte[] buffer = new byte[1024];   
+    	   while (!deflater.finished()) {  
+    	    int count = deflater.deflate(buffer);
+    	    outputStream.write(buffer, 0, count);   
+    	   }  
+    	   outputStream.close();  
+    	   byte[] output = outputStream.toByteArray();  
+    	   return output;  
+    	  }
+    /*Metodo de descompresiond e un byte array para la consulta de la base de datos*/
+    public static byte[] decomprimir(byte[] data) throws IOException, DataFormatException {  
+    	   Inflater inflater = new Inflater();   
+    	   inflater.setInput(data);  
+    	   ByteArrayOutputStream outputStream = new ByteArrayOutputStream(data.length);  
+    	   byte[] buffer = new byte[1024];  
+    	   while (!inflater.finished()) {  
+    	    int count = inflater.inflate(buffer);  
+    	    outputStream.write(buffer, 0, count);  
+    	   }  
+    	   outputStream.close();  
+    	   byte[] output = outputStream.toByteArray();  
+    	   return output;  
+    	  }  
    
 }

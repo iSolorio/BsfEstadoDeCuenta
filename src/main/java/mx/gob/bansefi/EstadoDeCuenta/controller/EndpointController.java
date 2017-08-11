@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import mx.gob.bansefi.EstadoDeCuenta.Service.Altaservice;
 import mx.gob.bansefi.EstadoDeCuenta.dto.RequestGralDTO;
+import mx.gob.bansefi.EstadoDeCuenta.dto.ResponseDTO;
 
 @RequestMapping("")
 @RestController
@@ -17,8 +18,8 @@ public class EndpointController {
 	
 	/*Endpoint para probar*/
 	@RequestMapping(value ="consultaEstadoCuenta", method = RequestMethod.POST)
-	public void pruebal(@RequestBody RequestGralDTO request){
+	public ResponseDTO pruebal(@RequestBody RequestGralDTO request){
 		
-			altaService.altaEstado(request);
+			return altaService.generacionReporte(request);
 	}
 }
