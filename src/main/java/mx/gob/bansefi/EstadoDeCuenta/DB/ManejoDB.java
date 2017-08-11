@@ -8,12 +8,9 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Statement;
 
 import javax.sql.DataSource;
 
-import org.assertj.core.util.Files;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -25,23 +22,36 @@ import com.zaxxer.hikari.HikariDataSource;
 
 @Component
 public class ManejoDB {
+	@Value("${url.database}")
+	private String urlDatabase;
+	@Value("${database.name}")
+	private String databaseName;
 	@Value("${database.usuario}")
 	private String databaseUsuario;
 	@Value("${database.password}")
 	private String databasePassword;
-	@Value("${database.name}")
-	private String databaseName;
-	@Value("${url.database}")
-	private String urlDatabase;
+	
+	@Value("${spring.datasource.url}")
+	static String urlSpringdatasourceurl;
+	@Value("${spring.datasource.hikari.username}")
+	static String urlSpringdatasourceusername;
+	@Value("${spring.datasource.hikari.password}")
+	static String urlSpringdatasourcepassword;
+	@Value("${spring.datasource.hikari.maximum-pool-size}")
+	static int urlMaximumpoolsize;
+	
+	@Value("${query.insert}")
+	private String urlQueryInsert;
+	
 	private static DataSource datasource;
 
 	public static DataSource getDataSource() {
 		if (datasource == null) {
 			HikariConfig config = new HikariConfig();
-			config.setJdbcUrl("jdbc:sqlserver://172.26.9.103;databaseName=BsfAcnSucursales");
-			config.setUsername("usrBsfWeb");
-			config.setPassword("Bansefi#2016");
-			config.setMaximumPoolSize(100);
+			config.setJdbcUrl(urlSpringdatasourceurl);
+			config.setUsername(urlSpringdatasourceusername);
+			config.setPassword(urlSpringdatasourcepassword);
+			config.setMaximumPoolSize(urlMaximumpoolsize);
 			config.setAutoCommit(false);
 			config.addDataSourceProperty("cachePrepStmts", "true");
 			config.addDataSourceProperty("prepStmtCacheSize", "250");
@@ -61,19 +71,17 @@ public class ManejoDB {
 			Connection conn = DriverManager.getConnection(urlDatabase, databaseUsuario, databasePassword);
 			System.out.println("connected");
 			return conn;
-
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
 	}
 
-	/* metodo de insercion de unpdf a la base de datos */
+	/* Metodo que realiza la insersion del pdf en la base de datos */
 	public void insertPDF(Connection conn, String filename, byte[] archivo) {
 		int len;
 		String query;
 		PreparedStatement pstmt;
-
 		try {
 			PdfReader reader = new PdfReader(filename);
 			PdfStamper stamper = new PdfStamper(reader, new FileOutputStream("compreso.pdf"), PdfWriter.VERSION_1_5);
@@ -83,7 +91,7 @@ public class ManejoDB {
 			System.out.println(file.length());
 			FileInputStream fis = new FileInputStream(file);
 			len = archivo.length;
-			query = ("insert into EdoCtaArch VALUES(?,?,?,?)");
+			query = (urlQueryInsert);
 			pstmt = conn.prepareStatement(query);
 			pstmt.setString(1, file.getName());
 			pstmt.setString(2, "08/02/2017");
@@ -99,45 +107,12 @@ public class ManejoDB {
 			e.printStackTrace();
 		}
 	}
-
-	/* metodo de insercion de unpdf a la base de datos */
-	public void insertPDF(Connection conn, String filename, byte[] archivo, String id) {
-		int len;
-		String query;
-		PreparedStatement pstmt;
-
-		try {
-			PdfReader reader = new PdfReader(filename);
-			PdfStamper stamper = new PdfStamper(reader, new FileOutputStream("compreso.pdf"), PdfWriter.VERSION_1_5);
-			stamper.setFullCompression();
-			stamper.close();
-			File file = new File("compreso.pdf");
-			System.out.println(file.length());
-			FileInputStream fis = new FileInputStream(file);
-			len = archivo.length;
-			query = ("insert into EdoCtaArch VALUES(?,?,?,?)");
-			pstmt = conn.prepareStatement(query);
-			pstmt.setString(1, id);
-			pstmt.setString(2, "3");
-			pstmt.setString(3, "3");
-			pstmt.setBytes(4, archivo);
-
-			// method to insert a stream of bytes
-			// pstmt.setBinaryStream(4, fis, len);
-			pstmt.executeUpdate();
-			file.delete();
-			fis.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	/* metodo que sustrae los pdfs que se solicitan */
+	
+	/*Metodo de consulta de pdf que se consultan */
 	public void getPDFData(Connection conn) {
 
 		byte[] fileBytes;
 		String query;
-
 		try {
 			PreparedStatement state;
 			query = ("select archivo from EdoCtaArch where fechaDesde=? and fechaHasta=?");
@@ -152,10 +127,8 @@ public class ManejoDB {
 				targetFile.write(fileBytes);
 				targetFile.close();
 			}
-
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-
 }

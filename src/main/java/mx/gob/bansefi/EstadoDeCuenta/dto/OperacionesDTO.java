@@ -9,12 +9,16 @@ import lombok.Setter;
 @NoArgsConstructor
 
 public class OperacionesDTO {
-	@Getter @Setter
+	@Getter
+	@Setter
 	private String fechaop;
-	@Getter @Setter
+	@Getter
+	@Setter
 	private String conceptoop;
-	@Getter @Setter
+	@Getter
+	@Setter
 	private String cargoop;
-	@Getter @Setter
+	@Getter
+	@Setter
 	private String abonoop;
 }

@@ -11,7 +11,6 @@ import java.util.Map;
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +18,6 @@ import mx.gob.bansefi.EstadoDeCuenta.DB.ManejoDB;
 import mx.gob.bansefi.EstadoDeCuenta.dto.OperacionesDTO;
 import mx.gob.bansefi.EstadoDeCuenta.dto.RequestGralDTO;
 import mx.gob.bansefi.EstadoDeCuenta.dto.jasperDTO;
-import mx.gob.bansefi.EstadoDeCuenta.utils.Util;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
@@ -32,20 +30,16 @@ import net.sf.jasperreports.engine.util.JRLoader;
 public class Altaservice {
 	@Autowired
 	private ManejoDB manejodb;
-	@Autowired
-	private Util util;
-	@Value("${url.database}")
-	private String urlDataBase;
-	/* servicio basico de prueba */
 	public static byte[] report;
 	DataSource dataSource = ManejoDB.getDataSource();
 	ByteArrayOutputStream out = new ByteArrayOutputStream();
+
 	@Async
 	public void altaEstado(RequestGralDTO request) {
 
 		System.out.println("Funciona");
 		// util.callRestPost( request, uri);
-		//Connection con = manejodb.dbConnect();
+		// Connection con = manejodb.dbConnect();
 		OperacionesDTO op = new OperacionesDTO("08/04/2017", "facturacion capital", "125.88", "");
 		OperacionesDTO op2 = new OperacionesDTO("08/04/2017", "pago de capital", "", "125.88");
 		ArrayList<OperacionesDTO> aaa = new ArrayList<OperacionesDTO>();
@@ -67,22 +61,22 @@ public class Altaservice {
 		for (int i = 0; i < 1; i++) {
 			id = String.valueOf(i);
 			try {
-					Connection con = dataSource.getConnection();
-					JasperReport jasperReport = (JasperReport) JRLoader.loadObjectFromFile("EstadoDeCuenta.jasper");
-					JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parametros,
-							new JRBeanCollectionDataSource(lista));
-					JasperExportManager.exportReportToPdfStream(jasperPrint, out);
-					report = out.toByteArray();
-					JasperExportManager.exportReportToPdfFile(jasperPrint, "C:\\Users\\appwhere\\Documents\\Proyecto\\BsfEstadoDeCuenta\\llenado.pdf");
-					manejodb.insertPDF(con, "C:\\Users\\appWhere\\Documents\\plantillaestadodecuenta.pdf", report);
-					//anejodb.getPDFData(con);
-				    System.out.println(i);
-				    con.close();
-				   
+				Connection con = dataSource.getConnection();
+				JasperReport jasperReport = (JasperReport) JRLoader.loadObjectFromFile("EstadoDeCuenta.jasper");
+				JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parametros,
+						new JRBeanCollectionDataSource(lista));
+				JasperExportManager.exportReportToPdfStream(jasperPrint, out);
+				report = out.toByteArray();
+				JasperExportManager.exportReportToPdfFile(jasperPrint,
+						"C:\\Users\\appwhere\\Documents\\Proyecto\\BsfEstadoDeCuenta\\llenado.pdf");
+				manejodb.insertPDF(con, "C:\\Users\\appWhere\\Documents\\plantillaestadodecuenta.pdf", report);
+				// anejodb.getPDFData(con);
+				con.close();
+
 			} catch (JRException | SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		}	
+		}
 	}
 }

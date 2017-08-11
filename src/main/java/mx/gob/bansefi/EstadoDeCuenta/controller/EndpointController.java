@@ -14,11 +14,10 @@ import mx.gob.bansefi.EstadoDeCuenta.dto.RequestGralDTO;
 public class EndpointController {
 	@Autowired
 	private Altaservice altaService;
-	
-	/*Endpoint para probar*/
-	@RequestMapping(value ="consultaEstadoCuenta", method = RequestMethod.POST)
-	public void pruebal(@RequestBody RequestGralDTO request){
-		
-			altaService.altaEstado(request);
+
+	/* Endpoint para probar */
+	@RequestMapping(value = "consultaEstadoCuenta", method = RequestMethod.POST)
+	public void pruebal(@RequestBody RequestGralDTO request) {
+		altaService.altaEstado(request);
 	}
 }
