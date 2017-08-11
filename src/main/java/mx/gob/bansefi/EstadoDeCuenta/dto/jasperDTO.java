@@ -8,14 +8,6 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class jasperDTO {
-
-	/*@Getter @Setter
-	private String idInterno;
-	@Getter @Setter
-	private String cuenta;
-	@Getter @Setter
-	private String descripcion;*/
-	
 	@Getter @Setter
 	private String nombre;
 	@Getter @Setter
@@ -88,14 +80,6 @@ public class jasperDTO {
 	private String totalPagar;
 	@Getter @Setter
 	private String fechaLimite;
-	@Getter @Setter
-	private String fechaOp;
-	@Getter @Setter
-	private String conceptoOp;
-	@Getter @Setter
-	private String cargoOp;
-	@Getter @Setter
-	private String abonoOp;
 	@Getter @Setter
 	private String folioAclaracion;
 	@Getter @Setter
