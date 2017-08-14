@@ -70,7 +70,7 @@ public class Altaservice {
 
 		try {
 			Connection con = dataSource.getConnection();
-			res=manejodb.getPDFData(con,"1999-01-01","1999-02-01");
+			res=manejodb.getPDFData(con,"2017-02-05","2017-04-05");
 			if(res.getMensajeInterno().equals("Vacio"))
 			{
 				JasperReport jasperReport = (JasperReport) JRLoader.loadObjectFromFile("EstadoDeCuenta.jasper");
