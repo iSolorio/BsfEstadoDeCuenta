@@ -24,4 +24,7 @@ public class RequestGralDTO {
 	@Getter
 	@Setter
 	private String terminal;
+	@Getter
+	@Setter
+	private String numAcSec;
 }

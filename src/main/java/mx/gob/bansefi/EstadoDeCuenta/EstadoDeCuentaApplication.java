@@ -4,6 +4,7 @@ import java.util.concurrent.Executor;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -14,9 +15,9 @@ import mx.gob.bansefi.EstadoDeCuenta.DB.ManejoDB;
 
 @SpringBootApplication
 @EnableAsync
+@EnableAutoConfiguration
 public class EstadoDeCuentaApplication {
-	@Autowired
-	private ManejoDB conexiones;
+	
 
 	public static void main(String[] args) {
 		ConfigurableApplicationContext context = SpringApplication.run(EstadoDeCuentaApplication.class, args);

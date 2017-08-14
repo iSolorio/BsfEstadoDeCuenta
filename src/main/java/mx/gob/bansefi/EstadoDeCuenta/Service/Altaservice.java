@@ -34,12 +34,21 @@ public class Altaservice {
 	private ManejoDB manejodb;
 	@Autowired
 	private Util util;
-	ManejoDB db= new ManejoDB();
-	DataSource dataSource = ManejoDB.getDataSource();
-	ByteArrayOutputStream out = new ByteArrayOutputStream();
+	
+	DataSource dataSource = null;
+	ByteArrayOutputStream out =null;
+//	ManejoDB db= new ManejoDB();
+	public Altaservice() {
+		out = new ByteArrayOutputStream();
+	}
+	
 	/*Metodo que se encarga de hacer una consulta de datos en la base de datos, en caso de no encontrarlo hace un alta de estado de cuenta con el timbre del sat*/
 	@Async
 	public ResponseDTO generacionReporte(RequestGralDTO request) {
+		if (this.dataSource == null) {
+			dataSource = manejodb.getDataSource();
+		}
+		//String jsonRes = this.util.callRestPost(reqAltaAccionistaFuncionarioDTO, rootContext+urlAltaAccionistaFuncionarios);
 		ResponseDTO res= new ResponseDTO();
 		OperacionesDTO op = new OperacionesDTO("08/04/2017", "facturacion capital", "125.88", "");
 		OperacionesDTO op2 = new OperacionesDTO("08/04/2017", "pago de capital", "", "125.88");
@@ -71,13 +80,18 @@ public class Altaservice {
 
 				res.setArchivo(out.toByteArray());
 				JasperExportManager.exportReportToPdfFile(jasperPrint,
-						"C:\\Users\\appwhere\\Documents\\Proyecto\\BsfEstadoDeCuenta\\llenado.pdf");
+						"llenado.pdf");
 				res.setMensajeInterno(manejodb.insertPDF(con, "C:\\Users\\appWhere\\Documents\\plantillaestadodecuenta.pdf", res.getArchivo()));
 				con.close();
 			}
 			else
 			{
-				return res;
+				if(res.getMensajeInterno().equals("El query no cumple con los requerimientos de la tabla"))
+				{
+					res.setStatus("0");
+					return res;
+				}
+				
 			}
 
 		} catch (JRException | SQLException e) {
