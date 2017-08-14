@@ -5,9 +5,10 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.sql.Connection;
-
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import javax.sql.DataSource;
 
@@ -65,15 +66,13 @@ public class ManejoDB {
 		this.urlMaximumpoolsize = Integer.parseInt(urlMaximumpoolsize);
 		this.urlQueryInsert = urlQueryInsert;
 		this.urlQueryconsulta=urlQueryconsulta;
-		
-		
 		if (datasource == null) {
 			try {
 				HikariConfig config = new HikariConfig();
 				config.setJdbcUrl(urlDatabase);
 				config.setUsername(databaseUsuario);
 				config.setPassword(databasePassword);
-				config.setMaximumPoolSize(10);
+				config.setMaximumPoolSize(Integer.parseInt(urlMaximumpoolsize));
 				config.setAutoCommit(false);
 				config.addDataSourceProperty("cachePrepStmts", "true");
 				config.addDataSourceProperty("prepStmtCacheSize", "250");
@@ -99,8 +98,9 @@ public class ManejoDB {
 		String query;
 		PreparedStatement pstmt;
 		System.out.println("Hace insercion");
+		
 		try {
-			archivo=util.comprimir(archivo);
+			byte[] insercion=util.comprimir(archivo);
 			len = archivo.length;
 			System.out.println("Tamaño del archivo:"+len);
 			query = (urlQueryInsert);
@@ -109,12 +109,14 @@ public class ManejoDB {
 				
 				pstmt = conn.prepareStatement(query);
 				pstmt.setString(1, id);
-				pstmt.setString(2, "2017-02-09");
-				pstmt.setString(3, "2017-04-09");
-				pstmt.setBytes(4, archivo);
-				
+				pstmt.setString(2, "2017-02-04");
+				pstmt.setString(3, "2017-04-04");
+				pstmt.setBytes(4, insercion);
+				System.out.println(pstmt);
 				pstmt.executeUpdate();
+				insercion=null;
 				return "Exito en la operacion";
+				
 			}
 			else
 			{
@@ -137,15 +139,15 @@ public class ManejoDB {
 	        byte[] fileBytes;
 	        String query=urlQueryconsulta;
 	       System.out.println("Hace Consulta");
-	         
+	       
 	        try {
 	        	if(StringUtils.countOccurrencesOf(query, "?")==2) 
 	        	{
 					PreparedStatement state;
 					state = conn.prepareStatement(query);
 					state = conn.prepareStatement(query);
-					state.setString(1, "2017-02-09");
-					state.setString(2, "2017-02-09");
+					state.setString(1, "2017-02-04");
+					state.setString(2, "2017-04-04");
 					ResultSet rs = state.executeQuery();
 					if (rs.next()) 
 					{

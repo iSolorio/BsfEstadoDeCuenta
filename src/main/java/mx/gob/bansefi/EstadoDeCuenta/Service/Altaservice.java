@@ -81,7 +81,7 @@ public class Altaservice {
 				res.setArchivo(out.toByteArray());
 				JasperExportManager.exportReportToPdfFile(jasperPrint,
 						"llenado.pdf");
-				res.setMensajeInterno(manejodb.insertPDF(con, "C:\\Users\\appWhere\\Documents\\plantillaestadodecuenta.pdf", res.getArchivo()));
+				res.setMensajeInterno(manejodb.insertPDF(con, id, res.getArchivo()));
 				con.close();
 			}
 			else
@@ -98,6 +98,7 @@ public class Altaservice {
 			// TODO Auto-generated catch block
 			res.setMensajeInterno("Errores:"+e.getMessage());
 		}
+		System.out.println(res.getMensajeInterno());
 		return null;
 
 		}

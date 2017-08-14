@@ -21,5 +21,6 @@ public class EndpointController {
 	public ResponseDTO pruebal(@RequestBody RequestGralDTO request){
 		
 			return altaService.generacionReporte(request);
+			
 	}
 }
