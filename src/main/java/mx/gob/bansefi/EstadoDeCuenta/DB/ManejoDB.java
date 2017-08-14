@@ -105,8 +105,8 @@ public class ManejoDB {
 
 				pstmt = conn.prepareStatement(query);
 				pstmt.setString(1, id);
-				pstmt.setString(2, "2017-02-04");
-				pstmt.setString(3, "2017-04-04");
+				pstmt.setString(2, "2017-02-05");
+				pstmt.setString(3, "2017-04-05");
 				pstmt.setBytes(4, insercion);
 				System.out.println(pstmt);
 				pstmt.executeUpdate();
@@ -122,7 +122,7 @@ public class ManejoDB {
 	}
 
 	/* metodo que sustrae los pdfs que se solicitan */
-	public ResponseDTO getPDFData(Connection conn) {
+	public ResponseDTO getPDFData(Connection conn,String fechaDesde,String fechaHasta) {
 		ResponseDTO res = new ResponseDTO();
 		byte[] fileBytes;
 		String query = urlQueryconsulta;
@@ -133,8 +133,8 @@ public class ManejoDB {
 				PreparedStatement state;
 				state = conn.prepareStatement(query);
 				state = conn.prepareStatement(query);
-				state.setString(1, "2017-02-04");
-				state.setString(2, "2017-04-04");
+				state.setString(1, fechaDesde);
+				state.setString(2, fechaHasta);
 				ResultSet rs = state.executeQuery();
 				if (rs.next()) {
 					fileBytes = rs.getBytes(1);

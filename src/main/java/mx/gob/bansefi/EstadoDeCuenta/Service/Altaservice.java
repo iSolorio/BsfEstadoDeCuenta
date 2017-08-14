@@ -66,11 +66,11 @@ public class Altaservice {
 		
 		Map<String, Object> parametros = new HashMap<String, Object>();
 		parametros.put("operaciones", aaa);
-		String id = "0";
+		String id = "3";
 
 		try {
 			Connection con = dataSource.getConnection();
-			res=manejodb.getPDFData(con);
+			res=manejodb.getPDFData(con,"1999-01-01","1999-02-01");
 			if(res.getMensajeInterno().equals("Vacio"))
 			{
 				JasperReport jasperReport = (JasperReport) JRLoader.loadObjectFromFile("EstadoDeCuenta.jasper");
