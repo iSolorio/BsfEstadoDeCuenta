@@ -76,6 +76,7 @@ public class Altaservice {
 				JasperReport jasperReport = (JasperReport) JRLoader.loadObjectFromFile("EstadoDeCuenta.jasper");
 				JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parametros,
 						new JRBeanCollectionDataSource(lista));
+				out.reset();
 				JasperExportManager.exportReportToPdfStream(jasperPrint, out);
 
 				res.setArchivo(out.toByteArray());
@@ -99,7 +100,7 @@ public class Altaservice {
 			res.setMensajeInterno("Errores:"+e.getMessage());
 		}
 		System.out.println(res.getMensajeInterno());
-		return null;
+		return res;
 
 		}
 

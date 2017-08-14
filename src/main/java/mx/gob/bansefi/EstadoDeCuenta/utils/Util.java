@@ -107,8 +107,9 @@ public final class Util<T> {
     	    int count = inflater.inflate(buffer);  
     	    outputStream.write(buffer, 0, count);  
     	   }  
-    	   outputStream.close();  
-    	   byte[] output = outputStream.toByteArray();  
+    	   outputStream.close(); 
+    	   byte[] output=null;
+    	   output = outputStream.toByteArray();  
     	   return output;  
     	  }  
    
