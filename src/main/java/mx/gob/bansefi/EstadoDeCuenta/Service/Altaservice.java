@@ -11,14 +11,18 @@ import mx.gob.bansefi.EstadoDeCuenta.utils.Util;
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import mx.gob.bansefi.EstadoDeCuenta.DB.ManejoDB;
+import mx.gob.bansefi.EstadoDeCuenta.Service.Login.LoginService;
 import mx.gob.bansefi.EstadoDeCuenta.dto.OperacionesDTO;
 import mx.gob.bansefi.EstadoDeCuenta.dto.RequestGralDTO;
 import mx.gob.bansefi.EstadoDeCuenta.dto.ResponseDTO;
 import mx.gob.bansefi.EstadoDeCuenta.dto.jasperDTO;
+import mx.gob.bansefi.EstadoDeCuenta.dto.Login.LoginDTO;
+import mx.gob.bansefi.EstadoDeCuenta.dto.Login.ResAperturaPuestoDTO;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
@@ -29,27 +33,60 @@ import net.sf.jasperreports.engine.util.JRLoader;
 
 @Service
 public class Altaservice {
-
+	/*
+	 * Inyeccion de dependencias
+	 */
 	@Autowired
 	private ManejoDB manejodb;
 	@Autowired
+	private LoginService loginService;
+	@Autowired
 	private Util util;
-	
+	/*
+	 * Definicion de variables de clase
+	 */
+	@Value("${tcb.Username}")
+	private String urlTcbUsername;
+	@Value("${tcb.Password}")
+	private String urlTcbPassword;
+
 	DataSource dataSource = null;
-	ByteArrayOutputStream out =null;
-//	ManejoDB db= new ManejoDB();
+	ByteArrayOutputStream out = null;
+
+	// ManejoDB db= new ManejoDB();
 	public Altaservice() {
 		out = new ByteArrayOutputStream();
 	}
 	
-	/*Metodo que se encarga de hacer una consulta de datos en la base de datos, en caso de no encontrarlo hace un alta de estado de cuenta con el timbre del sat*/
+	public ResponseDTO principal(RequestGralDTO request){
+		ResponseDTO aaa = null;
+		LoginDTO loginDTO = new LoginDTO();
+		try{
+			if(request != null && !request.getUsuario().equals("")){
+				aaa = generacionReporte(request);
+			}else{
+				System.out.println(urlTcbUsername+", "+urlTcbPassword);
+			}
+		}catch(Exception e){
+			
+		}
+		return aaa;
+	}
+
+	/*
+	 * Metodo que se encarga de hacer una consulta de datos en la base de datos,
+	 * en caso de no encontrarlo hace un alta de estado de cuenta con el timbre
+	 * del sat.
+	 */
 	@Async
 	public ResponseDTO generacionReporte(RequestGralDTO request) {
 		if (this.dataSource == null) {
 			dataSource = manejodb.getDataSource();
 		}
-		//String jsonRes = this.util.callRestPost(reqAltaAccionistaFuncionarioDTO, rootContext+urlAltaAccionistaFuncionarios);
-		ResponseDTO res= new ResponseDTO();
+		// String jsonRes =
+		// this.util.callRestPost(reqAltaAccionistaFuncionarioDTO,
+		// rootContext+urlAltaAccionistaFuncionarios);
+		ResponseDTO res = new ResponseDTO();
 		OperacionesDTO op = new OperacionesDTO("08/04/2017", "facturacion capital", "125.88", "");
 		OperacionesDTO op2 = new OperacionesDTO("08/04/2017", "pago de capital", "", "125.88");
 		ArrayList<OperacionesDTO> aaa = new ArrayList<OperacionesDTO>();
@@ -63,7 +100,7 @@ public class Altaservice {
 				"0349176172", "1003 Sucursal Empresarial", "40.00%", "Pesos Mexicanos", "$2500", "$0.00", "08/12/2019",
 				"009.990%", "00.00%", "PERIODOS REALIES", "PERIODOS RELAES", "$0.00", "08/04/2017", "", "", "", "",
 				""));
-		
+
 		Map<String, Object> parametros = new HashMap<String, Object>();
 		parametros.put("operaciones", aaa);
 		String id = "3";
@@ -103,6 +140,4 @@ public class Altaservice {
 		return res;
 
 		}
-
-	
 }

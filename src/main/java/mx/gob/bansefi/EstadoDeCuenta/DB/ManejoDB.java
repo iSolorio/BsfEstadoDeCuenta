@@ -1,36 +1,30 @@
 package mx.gob.bansefi.EstadoDeCuenta.DB;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
-
 import javax.sql.DataSource;
-
-import org.castor.core.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
-
-import com.microsoft.sqlserver.jdbc.SQLServerException;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-
 import mx.gob.bansefi.EstadoDeCuenta.dto.ResponseDTO;
 import mx.gob.bansefi.EstadoDeCuenta.utils.Util;
 
 @Component
 public class ManejoDB {
-
+	/*
+	 * Inyeccion de dependencias
+	 */
 	@Autowired
 	private Util util;
+	/*
+	 * Definicion de variables de clase
+	 */
 	@Value("${database.url}")
 	private String urlDatabase;
 	@Value("${database.name}")
@@ -49,14 +43,16 @@ public class ManejoDB {
 	private DataSource datasource;
 
 	/*
-	 * Este metodo inicializa el pool database
+	 * Metodo que inicializa el pool database
 	 * https://stackoverflow.com/questions/43096192/spring-boot-application-
 	 * properties-not-loaded
 	 */
-	public ManejoDB(@Value("${database.url}") String urlDatabase, @Value("${database.name}") String databaseName,
+	public ManejoDB(@Value("${database.url}") String urlDatabase, 
+			@Value("${database.name}") String databaseName,
 			@Value("${database.usuario}") String databaseUsuario,
 			@Value("${database.password}") String databasePassword,
-			@Value("${database.pool}") String urlMaximumpoolsize, @Value("${query.insert}") String urlQueryInsert,
+			@Value("${database.pool}") String urlMaximumpoolsize, 
+			@Value("${query.insert}") String urlQueryInsert,
 			@Value("${query.consulta}") String urlQueryconsulta) {
 		this.urlDatabase = urlDatabase;
 		this.databaseName = databaseName;
@@ -88,7 +84,7 @@ public class ManejoDB {
 		return datasource;
 	}
 
-	/* metodo de insercion de unpdf a la base de datos */
+	/* Metodo de insercion de un pdf a la base de datos */
 	public String insertPDF(Connection conn, String id, byte[] archivo) {
 		int len;
 		String query;

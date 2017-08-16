@@ -14,5 +14,4 @@ public class ResponseDTO {
 	private byte[] archivo;
 	@Getter @Setter
 	private String status;
-
 }
