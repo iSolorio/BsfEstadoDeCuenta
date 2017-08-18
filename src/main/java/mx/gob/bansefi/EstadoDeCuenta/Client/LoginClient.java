@@ -1,4 +1,4 @@
-package mx.gob.bansefi.EstadoDeCuenta.Client.Login;
+package mx.gob.bansefi.EstadoDeCuenta.Client;
 
 import java.util.ArrayList;
 

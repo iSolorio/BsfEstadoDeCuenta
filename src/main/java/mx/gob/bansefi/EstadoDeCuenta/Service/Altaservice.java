@@ -9,20 +9,17 @@ import java.util.List;
 import java.util.Map;
 import mx.gob.bansefi.EstadoDeCuenta.utils.Util;
 import javax.sql.DataSource;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-
 import mx.gob.bansefi.EstadoDeCuenta.DB.ManejoDB;
-import mx.gob.bansefi.EstadoDeCuenta.Service.Login.LoginService;
+import mx.gob.bansefi.EstadoDeCuenta.dto.EstadoDeCuentaDTO;
 import mx.gob.bansefi.EstadoDeCuenta.dto.OperacionesDTO;
-import mx.gob.bansefi.EstadoDeCuenta.dto.RequestGralDTO;
 import mx.gob.bansefi.EstadoDeCuenta.dto.ResponseDTO;
 import mx.gob.bansefi.EstadoDeCuenta.dto.jasperDTO;
-import mx.gob.bansefi.EstadoDeCuenta.dto.Login.LoginDTO;
-import mx.gob.bansefi.EstadoDeCuenta.dto.Login.ResAperturaPuestoDTO;
+import mx.gob.bansefi.EstadoDeCuenta.dto.DatosCredito.DatosCreditoDTO;
+import mx.gob.bansefi.EstadoDeCuenta.dto.DatosGral.ReqDatosGralDTO;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
@@ -39,16 +36,12 @@ public class Altaservice {
 	@Autowired
 	private ManejoDB manejodb;
 	@Autowired
-	private LoginService loginService;
-	@Autowired
 	private Util util;
 	/*
 	 * Definicion de variables de clase
 	 */
-	@Value("${tcb.Username}")
-	private String urlTcbUsername;
-	@Value("${tcb.Password}")
-	private String urlTcbPassword;
+	@Value("${msj.error.general.errorServicioCliente}")
+	private String urlErrorServicioCliente;
 
 	DataSource dataSource = null;
 	ByteArrayOutputStream out = null;
@@ -57,21 +50,6 @@ public class Altaservice {
 	public Altaservice() {
 		out = new ByteArrayOutputStream();
 	}
-	
-	public ResponseDTO principal(RequestGralDTO request){
-		ResponseDTO aaa = null;
-		LoginDTO loginDTO = new LoginDTO();
-		try{
-			if(request != null && !request.getUsuario().equals("")){
-				aaa = generacionReporte(request);
-			}else{
-				System.out.println(urlTcbUsername+", "+urlTcbPassword);
-			}
-		}catch(Exception e){
-			
-		}
-		return aaa;
-	}
 
 	/*
 	 * Metodo que se encarga de hacer una consulta de datos en la base de datos,
@@ -79,7 +57,7 @@ public class Altaservice {
 	 * del sat.
 	 */
 	@Async
-	public ResponseDTO generacionReporte(RequestGralDTO request) {
+	public ResponseDTO generacionReporte(EstadoDeCuentaDTO request) {
 		if (this.dataSource == null) {
 			dataSource = manejodb.getDataSource();
 		}
@@ -92,18 +70,18 @@ public class Altaservice {
 		ArrayList<OperacionesDTO> aaa = new ArrayList<OperacionesDTO>();
 		aaa.add(op);
 		aaa.add(op2);
-		ArrayList<jasperDTO> datos = new ArrayList<jasperDTO>();
-		List<jasperDTO> lista = new ArrayList<jasperDTO>();
-		lista.add(new jasperDTO("Juan Carlos", "Sta Rosalia", "ABCD123456ABCV1", "08/02/2017", "08/04/2017", "59",
-				"08/04/2017", "$2384.14", "$0.00", "3", "$165.25", "$185.15", "08/02/2017", "08/04/2017", "$2384",
-				"08/02/2017", "08/04/2017", "$30.03", "$0.00", "$0.00", "$0.84", "$2384", "CREDITO MAS AHORRO",
-				"0349176172", "1003 Sucursal Empresarial", "40.00%", "Pesos Mexicanos", "$2500", "$0.00", "08/12/2019",
-				"009.990%", "00.00%", "PERIODOS REALIES", "PERIODOS RELAES", "$0.00", "08/04/2017", "", "", "", "",
-				""));
+		List<DatosCreditoDTO> lista = new ArrayList<DatosCreditoDTO>();
+//		lista.add(new jasperDTO("Juan Carlos", "Sta Rosalia", "ABCD123456ABCV1", "08/02/2017", "08/04/2017", "59",
+//				"08/04/2017", "$2384.14", "$0.00", "3", "$165.25", "$185.15", "08/02/2017", "08/04/2017", "$2384",
+//				"08/02/2017", "08/04/2017", "$30.03", "$0.00", "$0.00", "$0.84", "$2384", "CREDITO MAS AHORRO",
+//				"0349176172", "1003 Sucursal Empresarial", "40.00%", "Pesos Mexicanos", "$2500", "$0.00", "08/12/2019",
+//				"009.990%", "00.00%", "PERIODOS REALIES", "PERIODOS RELAES", "$0.00", "08/04/2017", "", "", "", "",
+//				""));
+		lista.add(request.getResDatosCredito().getLista().get(1));
 
 		Map<String, Object> parametros = new HashMap<String, Object>();
 		parametros.put("operaciones", aaa);
-		String id = "3";
+		String id = "1";
 
 		try {
 			Connection con = dataSource.getConnection();
@@ -117,8 +95,7 @@ public class Altaservice {
 				JasperExportManager.exportReportToPdfStream(jasperPrint, out);
 
 				res.setArchivo(out.toByteArray());
-				JasperExportManager.exportReportToPdfFile(jasperPrint,
-						"llenado.pdf");
+				JasperExportManager.exportReportToPdfFile(jasperPrint,"llenado.pdf");
 				res.setMensajeInterno(manejodb.insertPDF(con, id, res.getArchivo()));
 				con.close();
 			}

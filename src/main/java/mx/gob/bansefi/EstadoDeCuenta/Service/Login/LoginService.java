@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import mx.gob.bansefi.EstadoDeCuenta.Client.Login.LoginClient;
+import mx.gob.bansefi.EstadoDeCuenta.Client.LoginClient;
 import mx.gob.bansefi.EstadoDeCuenta.dto.AperturaPuesto.AperturaPuestoDTO;
 import mx.gob.bansefi.EstadoDeCuenta.dto.AperturaPuesto.AperturaTRNDTO;
 import mx.gob.bansefi.EstadoDeCuenta.dto.AperturaPuesto.ReqAperturaPuestoDTO;

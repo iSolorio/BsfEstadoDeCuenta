@@ -117,13 +117,11 @@ public class ManejoDB {
 		return "Ocurrio un error durante el guardado";
 	}
 
-	/* metodo que sustrae los pdfs que se solicitan */
-	public ResponseDTO getPDFData(Connection conn,String fechaDesde,String fechaHasta) {
+	/* Metodo que sustrae los pdfs que se solicitan */
+	public ResponseDTO getPDFData(Connection conn, String fechaDesde, String fechaHasta) {
 		ResponseDTO res = new ResponseDTO();
 		byte[] fileBytes;
 		String query = urlQueryconsulta;
-		System.out.println("Hace Consulta");
-
 		try {
 			if (StringUtils.countOccurrencesOf(query, "?") == 2) {
 				PreparedStatement state;
@@ -152,5 +150,4 @@ public class ManejoDB {
 		}
 		return res;
 	}
-
 }

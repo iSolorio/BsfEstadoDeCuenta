@@ -1,4 +1,4 @@
-package mx.gob.bansefi.EstadoDeCuenta.dto;
+package mx.gob.bansefi.EstadoDeCuenta.dto.DatosCredito;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,7 +7,7 @@ import lombok.Setter;
 
 @AllArgsConstructor
 @NoArgsConstructor
-public class RequestGralDTO {
+public class ReqDatosCreditoDTO {
 	@Getter
 	@Setter
 	private String usuario;
@@ -16,14 +16,8 @@ public class RequestGralDTO {
 	private String password;
 	@Getter
 	@Setter
-	private String idInternoPe;
+	private String credito;
 	@Getter
 	@Setter
-	private String entidad;
-	@Getter
-	@Setter
-	private String terminal;
-	@Getter
-	@Setter
-	private String numAcSec;
+	private String referencia;
 }
