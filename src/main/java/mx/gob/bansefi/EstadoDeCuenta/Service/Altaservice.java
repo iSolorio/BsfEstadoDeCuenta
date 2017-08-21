@@ -15,11 +15,8 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import mx.gob.bansefi.EstadoDeCuenta.DB.ManejoDB;
 import mx.gob.bansefi.EstadoDeCuenta.dto.EstadoDeCuentaDTO;
-import mx.gob.bansefi.EstadoDeCuenta.dto.OperacionesDTO;
 import mx.gob.bansefi.EstadoDeCuenta.dto.ResponseDTO;
-import mx.gob.bansefi.EstadoDeCuenta.dto.jasperDTO;
 import mx.gob.bansefi.EstadoDeCuenta.dto.DatosCredito.DatosCreditoDTO;
-import mx.gob.bansefi.EstadoDeCuenta.dto.DatosGral.ReqDatosGralDTO;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
@@ -61,26 +58,32 @@ public class Altaservice {
 		if (this.dataSource == null) {
 			dataSource = manejodb.getDataSource();
 		}
-		// String jsonRes =
-		// this.util.callRestPost(reqAltaAccionistaFuncionarioDTO,
-		// rootContext+urlAltaAccionistaFuncionarios);
+		DatosCreditoDTO datosCred = new DatosCreditoDTO();
+		datosCred = request.getResDatosCredito().getLista().get(0);
+		datosCred.setRFC(request.getResDatosGral().getRFC());
+		datosCred.setBIO_FECHA_INCIAL(request.getResDatosCredito().getLista().get(0).getFECHA_INCIAL());
+		datosCred.setBIO_FECHA_FINAL(request.getResDatosCredito().getLista().get(0).getFECHA_FINAL());
+		datosCred.setBIO_SALDO(request.getResDatosCredito().getLista().get(0).getSALDO());
+		datosCred.setIO_FECHA_INCIAL(request.getResDatosCredito().getLista().get(0).getFECHA_INCIAL());
+		datosCred.setIO_FECHA_FINAL(request.getResDatosCredito().getLista().get(0).getFECHA_FINAL());
+		datosCred.setSALDO_FINAL(request.getResDatosCredito().getLista().get(0).getSALDO());
+		datosCred.setTIPOCTA("CREDITO MAS AHORRO");
+		datosCred.setPI_REVI_DE_TASA(request.getResDatosCredito().getLista().get(0).getREVI_DE_TASA());
+		datosCred.setFC_FECHA_FINAL(request.getResDatosCredito().getLista().get(0).getFECHA_FINAL());
+		datosCred.setPC_FECHA_FINAL(request.getResDatosCredito().getLista().get(0).getFECHA_FINAL());
+		datosCred.setFI_FECHA_FINAL(request.getResDatosCredito().getLista().get(0).getFECHA_FINAL());
+		datosCred.setPI_FECHA_FINAL(request.getResDatosCredito().getLista().get(0).getFECHA_FINAL());
+		datosCred.setPIV_FECHA_FINAL(request.getResDatosCredito().getLista().get(0).getFECHA_FINAL());
+		datosCred.setFIV_FECHA_FINAL(request.getResDatosCredito().getLista().get(0).getFECHA_FINAL());
+		datosCred.setPC_PAGO_CAPITAL(request.getResDatosCredito().getLista().get(0).getPAGO_CAPITAL());
+		datosCred.setPI_PAGO_INTERES(request.getResDatosCredito().getLista().get(0).getPAGO_INTERES());
+		datosCred.setFI_PAGO_IVA(request.getResDatosCredito().getLista().get(0).getPAGO_IVA());
 		ResponseDTO res = new ResponseDTO();
-		OperacionesDTO op = new OperacionesDTO("08/04/2017", "facturacion capital", "125.88", "");
-		OperacionesDTO op2 = new OperacionesDTO("08/04/2017", "pago de capital", "", "125.88");
-		ArrayList<OperacionesDTO> aaa = new ArrayList<OperacionesDTO>();
-		aaa.add(op);
-		aaa.add(op2);
 		List<DatosCreditoDTO> lista = new ArrayList<DatosCreditoDTO>();
-//		lista.add(new jasperDTO("Juan Carlos", "Sta Rosalia", "ABCD123456ABCV1", "08/02/2017", "08/04/2017", "59",
-//				"08/04/2017", "$2384.14", "$0.00", "3", "$165.25", "$185.15", "08/02/2017", "08/04/2017", "$2384",
-//				"08/02/2017", "08/04/2017", "$30.03", "$0.00", "$0.00", "$0.84", "$2384", "CREDITO MAS AHORRO",
-//				"0349176172", "1003 Sucursal Empresarial", "40.00%", "Pesos Mexicanos", "$2500", "$0.00", "08/12/2019",
-//				"009.990%", "00.00%", "PERIODOS REALIES", "PERIODOS RELAES", "$0.00", "08/04/2017", "", "", "", "",
-//				""));
-		lista.add(request.getResDatosCredito().getLista().get(1));
+		lista.add(datosCred);
 
 		Map<String, Object> parametros = new HashMap<String, Object>();
-		parametros.put("operaciones", aaa);
+		parametros.put("operaciones", null);
 		String id = "1";
 
 		try {
