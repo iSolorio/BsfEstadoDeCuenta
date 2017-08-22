@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import mx.gob.bansefi.EstadoDeCuenta.Client.ConsultaClient;
+import mx.gob.bansefi.EstadoDeCuenta.Service.Login.LoginService;
 import mx.gob.bansefi.EstadoDeCuenta.dto.EstadoDeCuentaDTO;
 import mx.gob.bansefi.EstadoDeCuenta.dto.RequestGralDTO;
 import mx.gob.bansefi.EstadoDeCuenta.dto.ResponseDTO;
@@ -12,6 +13,8 @@ import mx.gob.bansefi.EstadoDeCuenta.dto.DatosCredito.ReqDatosCreditoDTO;
 import mx.gob.bansefi.EstadoDeCuenta.dto.DatosCredito.ResDatosCreditoDTO;
 import mx.gob.bansefi.EstadoDeCuenta.dto.DatosGral.ReqDatosGralDTO;
 import mx.gob.bansefi.EstadoDeCuenta.dto.DatosGral.ResDatosGralDTO;
+import mx.gob.bansefi.EstadoDeCuenta.dto.Login.LoginDTO;
+import mx.gob.bansefi.EstadoDeCuenta.dto.Logon.ResLogonDTO;
 
 @Service
 public class ConsultaService {
@@ -22,6 +25,8 @@ public class ConsultaService {
 	private ConsultaClient consultaClient;
 	@Autowired
 	private Altaservice altaservice;
+	@Autowired
+	private LoginService loginService;
 	/*
 	 * Definicion de variables de clase
 	 */
@@ -39,6 +44,8 @@ public class ConsultaService {
 		EstadoDeCuentaDTO datos = null;
 		ResponseDTO response = null;
 		ReqDatosGralDTO datosGral = new ReqDatosGralDTO();
+		LoginDTO login = new LoginDTO();
+		ResLogonDTO resLogon = null;
 		try {
 			if (request != null && !request.getUsuario().equals("") && !request.getPassword().equals("")) {
 				datosGral.setUsuario(request.getUsuario());
@@ -56,11 +63,37 @@ public class ConsultaService {
 						&& datos.getResDatosCredito().getDatos().getESTATUS() == 0) {
 					response = altaservice.generacionReporte(datos);
 				} else {
-
+					response.setStatus("-1");
+					response.setMensajeInterno("Error en|public ResponseDTO generacionReporte(EstadoDeCuentaDTO request)");
 				}
-
 			} else {
-
+				login.setUsername(urlTcbUsername);
+				login.setPassword(urlTcbPassword);
+				resLogon = loginService.login(login);
+				if(resLogon != null && resLogon.getESTATUS() == 0){
+					datosGral.setUsuario(urlTcbUsername);
+					datosGral.setPassword(urlTcbPassword);
+					datosGral.setAccion(accion);
+					datosGral.setIntegrante(integrante);
+					datosGral.setIdInternoPe("");
+					datosGral.setApePa("");
+					datosGral.setApeMa("");
+					datosGral.setNombre("");
+					datosGral.setRazon("");
+					datosGral.setReferencia(referencia);
+					datos = principalConsulta(datosGral);
+					if (datos != null && datos.getResDatosGral().getDatos().getESTATUS() == 0
+							&& datos.getResDatosCredito().getDatos().getESTATUS() == 0) {
+						response = altaservice.generacionReporte(datos);
+					} else {
+						response.setStatus("-1");
+						response.setMensajeInterno("Error en|public ResponseDTO generacionReporte(EstadoDeCuentaDTO request)");
+					}
+					System.out.println("Se realizo login y apertura de puesto");
+				}else{
+					response.setStatus("-1");
+					response.setMensajeInterno("Error en|public ResLogonDTO login(LoginDTO loginDTO)");
+				}
 			}
 		} catch (Exception e) {
 

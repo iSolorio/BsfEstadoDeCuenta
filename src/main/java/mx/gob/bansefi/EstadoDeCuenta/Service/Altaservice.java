@@ -67,7 +67,7 @@ public class Altaservice {
 		datosCred.setIO_FECHA_INCIAL(request.getResDatosCredito().getLista().get(0).getFECHA_INCIAL());
 		datosCred.setIO_FECHA_FINAL(request.getResDatosCredito().getLista().get(0).getFECHA_FINAL());
 		datosCred.setSALDO_FINAL(request.getResDatosCredito().getLista().get(0).getSALDO());
-		datosCred.setTIPOCTA("CREDITO MAS AHORRO");
+		datosCred.setTIPOCTA(request.getResDatosGral().getPRODUCTO());
 		datosCred.setPI_REVI_DE_TASA(request.getResDatosCredito().getLista().get(0).getREVI_DE_TASA());
 		datosCred.setFC_FECHA_FINAL(request.getResDatosCredito().getLista().get(0).getFECHA_FINAL());
 		datosCred.setPC_FECHA_FINAL(request.getResDatosCredito().getLista().get(0).getFECHA_FINAL());
@@ -84,13 +84,19 @@ public class Altaservice {
 
 		Map<String, Object> parametros = new HashMap<String, Object>();
 		parametros.put("operaciones", null);
-		String id = "1";
+		String id = request.getResDatosCredito().getLista().get(0).getCREDITO()
+				+ request.getResDatosCredito().getLista().get(0).getFECHA_FINAL();
+		String fechaInicio = request.getResDatosCredito().getLista().get(0).getFECHA_INCIAL();
+		String fechaFin = request.getResDatosCredito().getLista().get(0).getFECHA_FINAL();
+		String nomArch = request.getResDatosCredito().getLista().get(0).getCREDITO() + "_"
+				+ request.getResDatosCredito().getLista().get(0).getNOMBRETO() + "_"
+				+ request.getResDatosCredito().getLista().get(0).getFECHA_FINAL() + ".pdf";
+		// String id = "1";
 
 		try {
 			Connection con = dataSource.getConnection();
-			res=manejodb.getPDFData(con,"2017-02-05","2017-04-05");
-			if(res.getMensajeInterno().equals("Vacio"))
-			{
+			res = manejodb.getPDFData(con, "2012_12_03", "2013_02_03", nomArch);
+			if (res.getMensajeInterno().equals("Vacio")) {
 				JasperReport jasperReport = (JasperReport) JRLoader.loadObjectFromFile("EstadoDeCuenta.jasper");
 				JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parametros,
 						new JRBeanCollectionDataSource(lista));
@@ -98,26 +104,22 @@ public class Altaservice {
 				JasperExportManager.exportReportToPdfStream(jasperPrint, out);
 
 				res.setArchivo(out.toByteArray());
-				JasperExportManager.exportReportToPdfFile(jasperPrint,"llenado.pdf");
-				res.setMensajeInterno(manejodb.insertPDF(con, id, res.getArchivo()));
+				JasperExportManager.exportReportToPdfFile(jasperPrint, nomArch);
+				res.setMensajeInterno(manejodb.insertPDF(con, id, fechaInicio, fechaFin, res.getArchivo()));
 				con.close();
-			}
-			else
-			{
-				if(res.getMensajeInterno().equals("El query no cumple con los requerimientos de la tabla"))
-				{
+			} else {
+				if (res.getMensajeInterno().equals("El query no cumple con los requerimientos de la tabla")) {
 					res.setStatus("0");
 					return res;
 				}
-				
 			}
 
 		} catch (JRException | SQLException e) {
 			// TODO Auto-generated catch block
-			res.setMensajeInterno("Errores:"+e.getMessage());
+			res.setMensajeInterno("Errores:" + e.getMessage());
 		}
 		System.out.println(res.getMensajeInterno());
 		return res;
 
-		}
+	}
 }

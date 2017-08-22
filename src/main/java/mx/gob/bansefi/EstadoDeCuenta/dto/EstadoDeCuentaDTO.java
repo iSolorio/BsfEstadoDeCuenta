@@ -6,13 +6,14 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import mx.gob.bansefi.EstadoDeCuenta.dto.DatosCredito.ResDatosCreditoDTO;
 import mx.gob.bansefi.EstadoDeCuenta.dto.DatosGral.ResDatosGralDTO;
-import mx.gob.bansefi.EstadoDeCuenta.dto.Login.ResAperturaPuestoDTO;
 
 @AllArgsConstructor
 @NoArgsConstructor
 public class EstadoDeCuentaDTO {
-	@Getter @Setter
+	@Getter
+	@Setter
 	private ResDatosGralDTO resDatosGral;
-	@Getter @Setter
+	@Getter
+	@Setter
 	private ResDatosCreditoDTO resDatosCredito;
 }

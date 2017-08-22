@@ -41,7 +41,6 @@ public class LoginClient {
 	 * usuario.
 	 */
 	public ResLogonDTO logon(ReqLogonDTO req) {
-		
 		ResLogonDTO res = null;
 		try {
 			String jsonRes = this.util.callRestPost(req, urlWsBsfPlataformaPrincipal + urlLoginLogofnsf);
@@ -51,7 +50,7 @@ public class LoginClient {
 				nodos.add("EjecutarResponse");
 				nodos.add("EjecutarResult");
 				res = (ResLogonDTO) this.util.jsonToObject(res, jsonRes, nodos);
-				if (res.getESTATUS().equals(0)) {
+				if (res.getESTATUS() == 0) {
 					nodos.add("ResponseBansefi");
 					CatalogoUsuarioDTO catalogo = new CatalogoUsuarioDTO(); 
                 	Usuario usuario = new Usuario();
@@ -62,7 +61,6 @@ public class LoginClient {
                 	usuario.setCENTRO(catalogo.getResponseBansefi().get(0).getCENTRO());
                 	usuario.setVENTANILLA(catalogo.getResponseBansefi().get(0).getVENTANILLA());
                 	res.setUsuario(usuario);
-
 				}
 			} else {
 				res.setESTATUS(-1);
@@ -82,7 +80,6 @@ public class LoginClient {
 		try {
 			String jsonRes = this.util.callRestPost(req, urlWsBsfPlataformaPrincipal+urlLoginAperturaPuesto);
 			res = new ResAperturaPuestoDTO();
-
 			if (!jsonRes.equals("")) {
 				ArrayList<String> nodos = new ArrayList<String>();
 				nodos.add("EjecutarResponse");

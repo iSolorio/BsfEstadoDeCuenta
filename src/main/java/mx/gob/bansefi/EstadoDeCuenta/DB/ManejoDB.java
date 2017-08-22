@@ -47,12 +47,10 @@ public class ManejoDB {
 	 * https://stackoverflow.com/questions/43096192/spring-boot-application-
 	 * properties-not-loaded
 	 */
-	public ManejoDB(@Value("${database.url}") String urlDatabase, 
-			@Value("${database.name}") String databaseName,
+	public ManejoDB(@Value("${database.url}") String urlDatabase, @Value("${database.name}") String databaseName,
 			@Value("${database.usuario}") String databaseUsuario,
 			@Value("${database.password}") String databasePassword,
-			@Value("${database.pool}") String urlMaximumpoolsize, 
-			@Value("${query.insert}") String urlQueryInsert,
+			@Value("${database.pool}") String urlMaximumpoolsize, @Value("${query.insert}") String urlQueryInsert,
 			@Value("${query.consulta}") String urlQueryconsulta) {
 		this.urlDatabase = urlDatabase;
 		this.databaseName = databaseName;
@@ -85,7 +83,7 @@ public class ManejoDB {
 	}
 
 	/* Metodo de insercion de un pdf a la base de datos */
-	public String insertPDF(Connection conn, String id, byte[] archivo) {
+	public String insertPDF(Connection conn, String id, String fechaInicio, String fechaFin, byte[] archivo) {
 		int len;
 		String query;
 		PreparedStatement pstmt;
@@ -101,8 +99,8 @@ public class ManejoDB {
 
 				pstmt = conn.prepareStatement(query);
 				pstmt.setString(1, id);
-				pstmt.setString(2, "2017-02-05");
-				pstmt.setString(3, "2017-04-05");
+				pstmt.setString(2, fechaInicio);
+				pstmt.setString(3, fechaFin);
 				pstmt.setBytes(4, insercion);
 				System.out.println(pstmt);
 				pstmt.executeUpdate();
@@ -118,7 +116,7 @@ public class ManejoDB {
 	}
 
 	/* Metodo que sustrae los pdfs que se solicitan */
-	public ResponseDTO getPDFData(Connection conn, String fechaDesde, String fechaHasta) {
+	public ResponseDTO getPDFData(Connection conn, String fechaDesde, String fechaHasta, String nomArch) {
 		ResponseDTO res = new ResponseDTO();
 		byte[] fileBytes;
 		String query = urlQueryconsulta;
@@ -133,7 +131,7 @@ public class ManejoDB {
 				if (rs.next()) {
 					fileBytes = rs.getBytes(1);
 					fileBytes = util.decomprimir(fileBytes);
-					OutputStream targetFile = new FileOutputStream("nuevo.pdf");
+					OutputStream targetFile = new FileOutputStream(nomArch);
 					targetFile.write(fileBytes);
 					targetFile.close();
 					res.setArchivo(fileBytes);

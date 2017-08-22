@@ -8,108 +8,158 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class DatosCreditoDTO {
-	@Getter @Setter
+	@Getter
+	@Setter
 	private String CREDITO;
-	@Getter @Setter
+	@Getter
+	@Setter
 	private String NOMBRETO;
-	@Getter @Setter
+	@Getter
+	@Setter
 	private String APOD_LEGAL;
-	@Getter @Setter
+	@Getter
+	@Setter
 	private String TIPO_CONTRATO;
-	@Getter @Setter
+	@Getter
+	@Setter
 	private String FECHA_CONTRA;
-	@Getter @Setter
+	@Getter
+	@Setter
 	private String MONTO_LINEA;
-	@Getter @Setter
+	@Getter
+	@Setter
 	private String FECHA_CORTE;
-	@Getter @Setter
+	@Getter
+	@Setter
 	private String MONTO_DEUDA;
-	@Getter @Setter
+	@Getter
+	@Setter
 	private String TIPO_CRED;
-	@Getter @Setter
+	@Getter
+	@Setter
 	private String VENCIMIENTO;
-	@Getter @Setter
+	@Getter
+	@Setter
 	private String TASA;
-	@Getter @Setter
+	@Getter
+	@Setter
 	private String CAP_ENTREGADO;
-	@Getter @Setter
+	@Getter
+	@Setter
 	private String REVI_DE_TASA;
-	@Getter @Setter
+	@Getter
+	@Setter
 	private String TASA_MOR;
-	@Getter @Setter
+	@Getter
+	@Setter
 	private String CAP_VIGENTE;
-	@Getter @Setter
+	@Getter
+	@Setter
 	private String CAP_VENCIDO;
-	@Getter @Setter
+	@Getter
+	@Setter
 	private String INT_VIG;
-	@Getter @Setter
+	@Getter
+	@Setter
 	private String INT_VENCIDO;
-	@Getter @Setter
+	@Getter
+	@Setter
 	private String INT_MORA;
-	@Getter @Setter
+	@Getter
+	@Setter
 	private String FECHA_INCIAL;
-	@Getter @Setter
+	@Getter
+	@Setter
 	private String FECHA_FINAL;
-	@Getter @Setter
+	@Getter
+	@Setter
 	private String DIAS_INTER;
-	@Getter @Setter
+	@Getter
+	@Setter
 	private String CAPITAL;
-	@Getter @Setter
+	@Getter
+	@Setter
 	private String CAPITAL_VENCIDO;
-	@Getter @Setter
+	@Getter
+	@Setter
 	private String TASA_ORDINARIA;
-	@Getter @Setter
+	@Getter
+	@Setter
 	private String TASA_MORATORIA;
-	@Getter @Setter
+	@Getter
+	@Setter
 	private String INTERES_VIGENTE;
-	@Getter @Setter
+	@Getter
+	@Setter
 	private String INTERES_VENCIDO;
-	@Getter @Setter
+	@Getter
+	@Setter
 	private String INTERES_MORATORIO;
-	@Getter @Setter
+	@Getter
+	@Setter
 	private String IVA;
-	@Getter @Setter
+	@Getter
+	@Setter
 	private String SALDO;
-	@Getter @Setter
+	@Getter
+	@Setter
 	private String PAGO_CAPITAL;
-	@Getter @Setter
+	@Getter
+	@Setter
 	private String PAGO_INTERES;
-	@Getter @Setter
+	@Getter
+	@Setter
 	private String PAGO_IVA;
-	//-------------------------------
-	@Getter @Setter
+	// -------------------------------
+	@Getter
+	@Setter
 	private String BIO_FECHA_INCIAL;
-	@Getter @Setter
+	@Getter
+	@Setter
 	private String BIO_FECHA_FINAL;
-	@Getter @Setter
+	@Getter
+	@Setter
 	private String BIO_SALDO;
-	@Getter @Setter
+	@Getter
+	@Setter
 	private String IO_FECHA_INCIAL;
-	@Getter @Setter
+	@Getter
+	@Setter
 	private String IO_FECHA_FINAL;
-	@Getter @Setter
+	@Getter
+	@Setter
 	private String SALDO_FINAL;
-	@Getter @Setter
+	@Getter
+	@Setter
 	private String PI_REVI_DE_TASA;
-	@Getter @Setter
+	@Getter
+	@Setter
 	private String FC_FECHA_FINAL;
-	@Getter @Setter
+	@Getter
+	@Setter
 	private String PC_FECHA_FINAL;
-	@Getter @Setter
+	@Getter
+	@Setter
 	private String FI_FECHA_FINAL;
-	@Getter @Setter
+	@Getter
+	@Setter
 	private String PI_FECHA_FINAL;
-	@Getter @Setter
+	@Getter
+	@Setter
 	private String PIV_FECHA_FINAL;
-	@Getter @Setter
+	@Getter
+	@Setter
 	private String FIV_FECHA_FINAL;
-	@Getter @Setter
+	@Getter
+	@Setter
 	private String PC_PAGO_CAPITAL;
-	@Getter @Setter
+	@Getter
+	@Setter
 	private String PI_PAGO_INTERES;
-	@Getter @Setter
+	@Getter
+	@Setter
 	private String FI_PAGO_IVA;
-	//-------------------------------
+	// -------------------------------
 	@Getter
 	@Setter
 	private String TIPOCTA;

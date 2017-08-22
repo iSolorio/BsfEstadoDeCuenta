@@ -16,11 +16,11 @@ public class Usuario {
 	private String NOMBRE;
 	@Getter
 	@Setter
-	private String ENTIDAD; // 0166
+	private String ENTIDAD;
 	@Getter
 	@Setter
-	private String CENTRO; // 0001
+	private String CENTRO;
 	@Getter
 	@Setter
-	private Integer VENTANILLA; // Terminal
+	private Integer VENTANILLA;
 }
