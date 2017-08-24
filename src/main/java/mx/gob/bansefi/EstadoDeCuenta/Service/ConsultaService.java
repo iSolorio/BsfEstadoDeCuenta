@@ -34,6 +34,8 @@ public class ConsultaService {
 	private String urlTcbUsername;
 	@Value("${tcb.Password}")
 	private String urlTcbPassword;
+	@Value("${msj.error.general.errorServicioCliente}")
+	private String urlErrorServicioCliente;
 
 	/*
 	 * Metodo principal en la cual se verifica si el cliente ya se encuentra
@@ -64,7 +66,7 @@ public class ConsultaService {
 					response = altaservice.generacionReporte(datos);
 				} else {
 					response.setStatus("-1");
-					response.setMensajeInterno("Error en|public ResponseDTO generacionReporte(EstadoDeCuentaDTO request)");
+					response.setMensajeInterno(urlErrorServicioCliente+"public ResponseDTO generacionReporte(EstadoDeCuentaDTO request)");
 				}
 			} else {
 				login.setUsername(urlTcbUsername);
@@ -87,12 +89,11 @@ public class ConsultaService {
 						response = altaservice.generacionReporte(datos);
 					} else {
 						response.setStatus("-1");
-						response.setMensajeInterno("Error en|public ResponseDTO generacionReporte(EstadoDeCuentaDTO request)");
+						response.setMensajeInterno(urlErrorServicioCliente+"public ResponseDTO generacionReporte(EstadoDeCuentaDTO request)");
 					}
-					System.out.println("Se realizo login y apertura de puesto");
 				}else{
 					response.setStatus("-1");
-					response.setMensajeInterno("Error en|public ResLogonDTO login(LoginDTO loginDTO)");
+					response.setMensajeInterno(urlErrorServicioCliente+"public ResLogonDTO login(LoginDTO loginDTO)");
 				}
 			}
 		} catch (Exception e) {
@@ -122,13 +123,13 @@ public class ConsultaService {
 					if (datosCredito != null && datosCredito.getDatos().getESTATUS() == 0) {
 						response.setResDatosCredito(datosCredito);
 					} else {
-
+						
 					}
 				} else {
 
 				}
 			} else {
-
+				
 			}
 		} catch (Exception e) {
 

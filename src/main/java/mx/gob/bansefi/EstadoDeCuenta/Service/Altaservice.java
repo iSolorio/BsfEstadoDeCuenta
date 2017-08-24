@@ -58,40 +58,22 @@ public class Altaservice {
 		if (this.dataSource == null) {
 			dataSource = manejodb.getDataSource();
 		}
-		DatosCreditoDTO datosCred = new DatosCreditoDTO();
-		datosCred = request.getResDatosCredito().getLista().get(0);
-		datosCred.setRFC(request.getResDatosGral().getRFC());
-		datosCred.setBIO_FECHA_INCIAL(request.getResDatosCredito().getLista().get(0).getFECHA_INCIAL());
-		datosCred.setBIO_FECHA_FINAL(request.getResDatosCredito().getLista().get(0).getFECHA_FINAL());
-		datosCred.setBIO_SALDO(request.getResDatosCredito().getLista().get(0).getSALDO());
-		datosCred.setIO_FECHA_INCIAL(request.getResDatosCredito().getLista().get(0).getFECHA_INCIAL());
-		datosCred.setIO_FECHA_FINAL(request.getResDatosCredito().getLista().get(0).getFECHA_FINAL());
-		datosCred.setSALDO_FINAL(request.getResDatosCredito().getLista().get(0).getSALDO());
+		DatosCreditoDTO datosCred = request.getResDatosCredito().getDatosCredito();
 		datosCred.setTIPOCTA(request.getResDatosGral().getPRODUCTO());
-		datosCred.setPI_REVI_DE_TASA(request.getResDatosCredito().getLista().get(0).getREVI_DE_TASA());
-		datosCred.setFC_FECHA_FINAL(request.getResDatosCredito().getLista().get(0).getFECHA_FINAL());
-		datosCred.setPC_FECHA_FINAL(request.getResDatosCredito().getLista().get(0).getFECHA_FINAL());
-		datosCred.setFI_FECHA_FINAL(request.getResDatosCredito().getLista().get(0).getFECHA_FINAL());
-		datosCred.setPI_FECHA_FINAL(request.getResDatosCredito().getLista().get(0).getFECHA_FINAL());
-		datosCred.setPIV_FECHA_FINAL(request.getResDatosCredito().getLista().get(0).getFECHA_FINAL());
-		datosCred.setFIV_FECHA_FINAL(request.getResDatosCredito().getLista().get(0).getFECHA_FINAL());
-		datosCred.setPC_PAGO_CAPITAL(request.getResDatosCredito().getLista().get(0).getPAGO_CAPITAL());
-		datosCred.setPI_PAGO_INTERES(request.getResDatosCredito().getLista().get(0).getPAGO_INTERES());
-		datosCred.setFI_PAGO_IVA(request.getResDatosCredito().getLista().get(0).getPAGO_IVA());
+		datosCred.setRFC(request.getResDatosGral().getRFC());
 		ResponseDTO res = new ResponseDTO();
 		List<DatosCreditoDTO> lista = new ArrayList<DatosCreditoDTO>();
 		lista.add(datosCred);
 
 		Map<String, Object> parametros = new HashMap<String, Object>();
 		parametros.put("operaciones", null);
-		String id = request.getResDatosCredito().getLista().get(0).getCREDITO()
-				+ request.getResDatosCredito().getLista().get(0).getFECHA_FINAL();
-		String fechaInicio = request.getResDatosCredito().getLista().get(0).getFECHA_INCIAL();
-		String fechaFin = request.getResDatosCredito().getLista().get(0).getFECHA_FINAL();
-		String nomArch = request.getResDatosCredito().getLista().get(0).getCREDITO() + "_"
-				+ request.getResDatosCredito().getLista().get(0).getNOMBRETO() + "_"
-				+ request.getResDatosCredito().getLista().get(0).getFECHA_FINAL() + ".pdf";
-		// String id = "1";
+		String id = request.getResDatosCredito().getDatosCredito().getCREDITO()+"_"
+				+ request.getResDatosCredito().getDatosCredito().getFECHA_FINAL().replaceAll("/", "");
+		String fechaInicio = request.getResDatosCredito().getDatosCredito().getFECHA_INCIAL();
+		String fechaFin = request.getResDatosCredito().getDatosCredito().getFECHA_FINAL();
+		String nomArch = request.getResDatosCredito().getDatosCredito().getCREDITO() + "_"
+				+ request.getResDatosCredito().getDatosCredito().getNOMBRETO().replaceAll(" ", "") + "_"
+				+ request.getResDatosCredito().getDatosCredito().getFECHA_FINAL().replaceAll("/", "_") + ".pdf";
 
 		try {
 			Connection con = dataSource.getConnection();
@@ -118,7 +100,6 @@ public class Altaservice {
 			// TODO Auto-generated catch block
 			res.setMensajeInterno("Errores:" + e.getMessage());
 		}
-		System.out.println(res.getMensajeInterno());
 		return res;
 
 	}
