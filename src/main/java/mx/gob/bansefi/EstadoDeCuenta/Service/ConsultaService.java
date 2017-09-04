@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import mx.gob.bansefi.EstadoDeCuenta.Client.ConsultaClient;
 import mx.gob.bansefi.EstadoDeCuenta.Service.Login.LoginService;
+import mx.gob.bansefi.EstadoDeCuenta.dto.RequestAltaDTO;
 import mx.gob.bansefi.EstadoDeCuenta.dto.EstadoDeCuentaDTO;
 import mx.gob.bansefi.EstadoDeCuenta.dto.RequestGralDTO;
 import mx.gob.bansefi.EstadoDeCuenta.dto.ResponseDTO;
@@ -36,64 +37,43 @@ public class ConsultaService {
 	private String urlTcbPassword;
 	@Value("${msj.error.general.errorServicioCliente}")
 	private String urlErrorServicioCliente;
-
+	
 	/*
-	 * Metodo principal en la cual se verifica si el cliente ya se encuentra
+	 * Metodo de inicio en la cual se verifica si el cliente ya se encuentra
 	 * logeado, si este aun no lo esta se inicia sesion automaticamente tomando
 	 * los datos del properties
 	 */
-	public ResponseDTO principal(RequestGralDTO request, String accion, String integrante, String referencia) {
-		EstadoDeCuentaDTO datos = null;
-		ResponseDTO response = null;
-		ReqDatosGralDTO datosGral = new ReqDatosGralDTO();
+	public ResDatosGralDTO creditos(ReqDatosGralDTO request) {
+		ResDatosGralDTO response = null;
 		LoginDTO login = new LoginDTO();
 		ResLogonDTO resLogon = null;
+		ReqDatosGralDTO datosGral = new ReqDatosGralDTO();
+		datosGral.setIdInternoPe((request.getIdInternoPe() == null) ? "" : request.getIdInternoPe());
+		datosGral.setEntidad((request.getEntidad() == null) ? "" : request.getEntidad());
+		datosGral.setTerminal((request.getTerminal() == null) ? "" : request.getTerminal());
+		datosGral.setAccion((request.getAccion() == null) ? "" : request.getAccion());
+		datosGral.setIntegrante((request.getIntegrante() == null) ? "" : request.getIntegrante());
+		datosGral.setNombre((request.getNombre() == null) ? "" : request.getNombre());
+		datosGral.setApePa((request.getApePa() == null) ? "" : request.getApePa());
+		datosGral.setApeMa((request.getApeMa() == null) ? "" : request.getApeMa());
+		datosGral.setReferencia((request.getReferencia() == null) ? "" : request.getReferencia());
+		datosGral.setRazon((request.getRazon() == null) ? "" : request.getRazon());
 		try {
-			if (request != null && !request.getUsuario().equals("") && !request.getPassword().equals("")) {
-				datosGral.setUsuario(request.getUsuario());
-				datosGral.setPassword(request.getPassword());
-				datosGral.setAccion(accion);
-				datosGral.setIntegrante(integrante);
-				datosGral.setIdInternoPe("");
-				datosGral.setApePa("");
-				datosGral.setApeMa("");
-				datosGral.setNombre("");
-				datosGral.setRazon("");
-				datosGral.setReferencia(referencia);
-				datos = principalConsulta(datosGral);
-				if (datos != null && datos.getResDatosGral().getDatos().getESTATUS() == 0
-						&& datos.getResDatosCredito().getDatos().getESTATUS() == 0) {
-					response = altaservice.generacionReporte(datos);
-				} else {
-					response.setStatus("-1");
-					response.setMensajeInterno(urlErrorServicioCliente+"public ResponseDTO generacionReporte(EstadoDeCuentaDTO request)");
-				}
+			if (!request.getUsuario().equals("") && !request.getPassword().equals("")) {
+				datosGral.setUsuario((request.getUsuario() == null) ? "" : request.getUsuario());
+				datosGral.setPassword((request.getPassword() == null) ? "" : request.getPassword());
+				response = principalConsulta(datosGral);
 			} else {
-				login.setUsername(urlTcbUsername);
-				login.setPassword(urlTcbPassword);
+				login.setUsername((urlTcbUsername == null) ? "" : urlTcbUsername);
+				login.setPassword((urlTcbPassword == null) ? "" : urlTcbPassword);
 				resLogon = loginService.login(login);
-				if(resLogon != null && resLogon.getESTATUS() == 0){
-					datosGral.setUsuario(urlTcbUsername);
-					datosGral.setPassword(urlTcbPassword);
-					datosGral.setAccion(accion);
-					datosGral.setIntegrante(integrante);
-					datosGral.setIdInternoPe("");
-					datosGral.setApePa("");
-					datosGral.setApeMa("");
-					datosGral.setNombre("");
-					datosGral.setRazon("");
-					datosGral.setReferencia(referencia);
-					datos = principalConsulta(datosGral);
-					if (datos != null && datos.getResDatosGral().getDatos().getESTATUS() == 0
-							&& datos.getResDatosCredito().getDatos().getESTATUS() == 0) {
-						response = altaservice.generacionReporte(datos);
-					} else {
-						response.setStatus("-1");
-						response.setMensajeInterno(urlErrorServicioCliente+"public ResponseDTO generacionReporte(EstadoDeCuentaDTO request)");
-					}
-				}else{
-					response.setStatus("-1");
-					response.setMensajeInterno(urlErrorServicioCliente+"public ResLogonDTO login(LoginDTO loginDTO)");
+				if (resLogon != null && resLogon.getESTATUS() == 0) {
+					datosGral.setUsuario((urlTcbUsername == null) ? "" : urlTcbUsername);
+					datosGral.setPassword((urlTcbPassword == null) ? "" : urlTcbPassword);
+					response = principalConsulta(datosGral);
+				} else {
+					//response.setResDatosGral();
+					//response.setMensajeInterno(urlErrorServicioCliente + "public ResLogonDTO login(LoginDTO loginDTO)");
 				}
 			}
 		} catch (Exception e) {
@@ -103,33 +83,32 @@ public class ConsultaService {
 	}
 
 	/*
-	 * Metodo principal que realiza el consumo del cliente de consultaClient
+	 * Metodo que realiza la consulta de los creditos de una persona
 	 */
-	public EstadoDeCuentaDTO principalConsulta(ReqDatosGralDTO request) {
-		ResDatosGralDTO datosGral = null;
-		ResDatosCreditoDTO datosCredito = null;
-		EstadoDeCuentaDTO response = new EstadoDeCuentaDTO();
-		ReqDatosCreditoDTO req = new ReqDatosCreditoDTO();
+	public ResDatosGralDTO principalConsulta(ReqDatosGralDTO request) {
+		ResDatosGralDTO response = new ResDatosGralDTO();
 		try {
-			if (request != null && !request.getUsuario().equals("") && !request.getPassword().equals("")) {
-				datosGral = consultaClient.consDatosGral(request);
-				if (datosGral != null && datosGral.getDatos().getESTATUS() == 0) {
-					response.setResDatosGral(datosGral);
-					req.setUsuario(request.getUsuario());
-					req.setPassword(request.getPassword());
-					req.setCredito(datosGral.getCREDITO());
-					req.setReferencia(datosGral.getREFER());
-					datosCredito = consultaClient.consultaDatosCredito(req);
-					if (datosCredito != null && datosCredito.getDatos().getESTATUS() == 0) {
-						response.setResDatosCredito(datosCredito);
-					} else {
-						
-					}
-				} else {
-
-				}
+			if (!request.getUsuario().equals("") && !request.getPassword().equals("")) {
+				response = consultaClient.consDatosGral(request);
 			} else {
-				
+				System.out.println("Error");
+			}
+		} catch (Exception e) {
+
+		}
+		return response;
+	}
+	
+	/*
+	 * Metodo que realiza la consulta de los productos de los creditos de una persona
+	 */
+	public ResDatosCreditoDTO productos(ReqDatosCreditoDTO request) {
+		ResDatosCreditoDTO response = null;
+		try {
+			if (!request.getUsuario().equals("") && !request.getPassword().equals("")) {
+				response = consultaClient.consultaDatosCredito(request);
+			} else {
+				System.out.println("Error");
 			}
 		} catch (Exception e) {
 

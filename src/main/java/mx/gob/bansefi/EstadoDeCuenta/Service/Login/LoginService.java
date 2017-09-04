@@ -43,14 +43,18 @@ public class LoginService {
 		 * Se realiza la apertura de puesto de UANL.
 		 */
 		ResAperturaPuestoDTO resAperturaPuesto = null;
-		if (resLogon != null && resLogon.getESTATUS().equals(0)) {
-			resAperturaPuesto = aperturaPuesto(resLogon.getUsuario(), loginDTO);
-			if(resAperturaPuesto != null && resAperturaPuesto.getESTATUS() == 0){
-				response = resLogon;
-			}else{
-				response.setESTATUS(-1);
-				response.setMENSAJE("Ocurrio un error al consumir el servicio|public ResLogonDTO login(LoginDTO loginDTO)");
+		try{
+			if (resLogon != null && resLogon.getESTATUS().equals(0)) {
+				resAperturaPuesto = aperturaPuesto(resLogon.getUsuario(), loginDTO);
+				if(resAperturaPuesto != null && resAperturaPuesto.getESTATUS() == 0){
+					response = resLogon;
+				}else{
+					response.setESTATUS(-1);
+					response.setMENSAJE("Ocurrio un error al consumir el servicio|public ResLogonDTO login(LoginDTO loginDTO)");
+				}
 			}
+		}catch(Exception e){
+			
 		}
 		return response;
 	}

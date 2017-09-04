@@ -5,9 +5,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
+import mx.gob.bansefi.EstadoDeCuenta.Service.Altaservice;
 import mx.gob.bansefi.EstadoDeCuenta.Service.ConsultaService;
+import mx.gob.bansefi.EstadoDeCuenta.dto.RequestAltaDTO;
+import mx.gob.bansefi.EstadoDeCuenta.dto.EstadoDeCuentaDTO;
 import mx.gob.bansefi.EstadoDeCuenta.dto.RequestGralDTO;
 import mx.gob.bansefi.EstadoDeCuenta.dto.ResponseDTO;
+import mx.gob.bansefi.EstadoDeCuenta.dto.DatosCredito.ReqDatosCreditoDTO;
+import mx.gob.bansefi.EstadoDeCuenta.dto.DatosCredito.ResDatosCreditoDTO;
+import mx.gob.bansefi.EstadoDeCuenta.dto.DatosGral.ReqDatosGralDTO;
+import mx.gob.bansefi.EstadoDeCuenta.dto.DatosGral.ResDatosGralDTO;
 
 @RequestMapping("")
 @RestController
@@ -17,12 +25,31 @@ public class EndpointController {
 	 */
 	@Autowired
 	private ConsultaService consultaService;
-
+	@Autowired
+	private Altaservice altaservice;
+	
 	/*
-	 * Endpoint principal
+	 * Endpoint de consukta de creditos
 	 */
-	@RequestMapping(value = "inicioEstadoDeCuenta", method = RequestMethod.POST)
-	public ResponseDTO inicioEstadoDeCuenta(@RequestBody RequestGralDTO request) {
-		return consultaService.principal(request, "2", "007607350", "1");
+	@RequestMapping(value = "consultaCreditos", method = RequestMethod.POST)
+	public ResDatosGralDTO consultaCreditos(@RequestBody ReqDatosGralDTO request) {
+		return consultaService.creditos(request);
+	}
+	
+	/*
+	 * Endpoint de consukta de productos
+	 */
+	@RequestMapping(value = "consultaProducto", method = RequestMethod.POST)
+	public ResDatosCreditoDTO consultaProducto(@RequestBody ReqDatosCreditoDTO request) {
+		return consultaService.productos(request);
+	}
+	
+	/*
+	 * Endpoint de busqueda del periodo en la base de datos y en caso de no encontrarlo lo registra
+	 */
+	@RequestMapping(value = "consultaAltaEdoCuenta", method = RequestMethod.POST)
+	public ResponseDTO consultaAltaEdoCuenta(@RequestBody RequestAltaDTO request) {
+			return altaservice.generacionReporte(request);
+
 	}
 }

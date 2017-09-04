@@ -83,50 +83,56 @@ public class ManejoDB {
 	}
 
 	/* Metodo de insercion de un pdf a la base de datos */
-	public String insertPDF(Connection conn, String id, String fechaInicio, String fechaFin, byte[] archivo) {
-		int len;
+	public String insertPDF(Connection conn, String id, String fechaInicio, String fechaFin, byte[] archivo, String usuario, String terminal, int tipo) {
+		int len = 0;
 		String query;
+		String message = "";
 		PreparedStatement pstmt;
 		System.out.println("Hace insercion" + archivo.length);
 
 		try {
 			byte[] insercion = util.comprimir(archivo);
-			len = 0;
 			len = archivo.length;
-			System.out.println("Tamaño del archivo:" + insercion.length);
+			System.out.println("Tamaño del archivo: " + insercion.length);
 			query = (urlQueryInsert);
-			if (StringUtils.countOccurrencesOf(query, "?") == 4) {
+			if (StringUtils.countOccurrencesOf(query, "?") == 8) {
 
 				pstmt = conn.prepareStatement(query);
 				pstmt.setString(1, id);
 				pstmt.setString(2, fechaInicio);
 				pstmt.setString(3, fechaFin);
 				pstmt.setBytes(4, insercion);
+				pstmt.setString(5, "bimestral");
+				pstmt.setString(6, usuario);
+				pstmt.setString(7, terminal);
+				pstmt.setInt(8, tipo);
 				System.out.println(pstmt);
 				pstmt.executeUpdate();
-				return "Exito en la operacion";
+				message = "Exito en la operacion";
 
 			} else {
-				return "El query no cumple con los requerimientos especificados en la tabla";
+				message = "El query no cumple con los requerimientos especificados en la tabla";
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
+			message = "Ocurrio un error durante el guardado";
 		}
-		return "Ocurrio un error durante el guardado";
+		return message;
 	}
 
 	/* Metodo que sustrae los pdfs que se solicitan */
-	public ResponseDTO getPDFData(Connection conn, String fechaDesde, String fechaHasta, String nomArch) {
+	public ResponseDTO getPDFData(Connection conn, String numSecAc, String fechaDesde, String fechaHasta, String nomArch) {
 		ResponseDTO res = new ResponseDTO();
 		byte[] fileBytes;
 		String query = urlQueryconsulta;
 		try {
-			if (StringUtils.countOccurrencesOf(query, "?") == 2) {
+			if (StringUtils.countOccurrencesOf(query, "?") == 3) {
 				PreparedStatement state;
 				state = conn.prepareStatement(query);
-				state = conn.prepareStatement(query);
-				state.setString(1, fechaDesde);
-				state.setString(2, fechaHasta);
+				//state = conn.prepareStatement(query);
+				state.setString(1, numSecAc);
+				state.setString(2, fechaDesde);
+				state.setString(3, fechaHasta);
 				ResultSet rs = state.executeQuery();
 				if (rs.next()) {
 					fileBytes = rs.getBytes(1);

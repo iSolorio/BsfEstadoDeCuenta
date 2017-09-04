@@ -4,13 +4,18 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import mx.gob.bansefi.EstadoDeCuenta.dto.Login.ResAperturaPuestoDTO;
 
 @AllArgsConstructor
 @NoArgsConstructor
-public class ResDatosGralDTO{
+public class DatosGralDTO {
 	@Getter @Setter
-	private ResAperturaPuestoDTO datos;
+	private String CREDITO;
 	@Getter @Setter
-	private CatalogoDatosGralDTO creditos;
+    private String PRODUCTO;
+	@Getter @Setter
+    private String CLIENTE;
+	@Getter @Setter
+    private String RFC;
+	@Getter @Setter
+    private String REFER;
 }

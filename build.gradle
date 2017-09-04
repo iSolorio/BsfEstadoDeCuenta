@@ -15,8 +15,12 @@ apply plugin: 'eclipse-wtp'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'war'
 
-version = '0.0.1-SNAPSHOT'
 sourceCompatibility = 1.8
+
+war {
+	baseName = 'EdoCuentaBack'
+	version =  '0.1.0'
+}
 
 repositories {
 	mavenCentral()
@@ -49,4 +53,10 @@ dependencies {
 	compile "org.projectlombok:lombok:1.16.16"
 	 // https://mvnrepository.com/artifact/com.microsoft.sqlserver/mssql-jdbc
  	compile group: 'com.microsoft.sqlserver', name: 'mssql-jdbc', version: '6.1.0.jre8'
+ 	// https://mvnrepository.com/artifact/net.sf.jasperreports/jasperreports
+	compile group: 'net.sf.jasperreports', name: 'jasperreports', version: '6.4.1'
+	// https://mvnrepository.com/artifact/org.olap4j/olap4j
+	compile group: 'org.olap4j', name: 'olap4j', version: '1.2.0'
+	
+ 	
 }

@@ -14,5 +14,5 @@ public class ResDatosCreditoDTO {
 	@Getter @Setter
 	private ResAperturaPuestoDTO datos;
 	@Getter @Setter
-	private DatosCreditoDTO datosCredito;
+	private ArrayList<DatosCreditoDTO> datosCredito;
 }

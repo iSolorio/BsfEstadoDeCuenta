@@ -14,16 +14,22 @@ public class ReqDatosGralDTO {
 	private String usuario;
 	@Getter
 	@Setter
-	private String password; 
+	private String password;
+	@Getter
+	@Setter
+	private String idInternoPe;
+	@Getter
+	@Setter
+	private String entidad;
+	@Getter
+	@Setter
+	private String terminal;
 	@Getter
 	@Setter
 	private String accion;
 	@Getter
 	@Setter
 	private String integrante;
-	@Getter
-	@Setter
-	private String idInternoPe;
 	@Getter
 	@Setter
 	private String apePa;

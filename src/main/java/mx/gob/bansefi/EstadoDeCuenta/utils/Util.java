@@ -12,6 +12,7 @@ import java.util.zip.Deflater;
 import java.util.zip.Inflater;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import mx.gob.bansefi.EstadoDeCuenta.dto.DatosCredito.DatosCreditoDTO;
 
@@ -155,9 +156,9 @@ public final class Util<T> {
 	/*
 	 * Metodo para dar formato a los datos que representan cantidades
 	 */
-	public String formato(String request){
+	public String formatoCant(String request){
 		String response = "";
-		if(request != null && request != ""){
+		if(request != ""){
 			String format = request.replaceFirst("^0*", "");
 			if(format.length()>0){
 				String subInt = format.substring(0, format.length()-2);
@@ -166,8 +167,30 @@ public final class Util<T> {
 			}else{
 				response = "0.00";
 			}
+		}else{
+			response = "0.00";
 		}
-		return response;
+		return "$"+response;
+	}
+	
+	/*
+	 * Metodo para dar formato a los datos que representan porcentajes
+	 */
+	public String formatoPorc(String request){
+		String response = "";
+		if(request != ""){
+			String format = request.replaceFirst("^0*", "");
+			if(format.length()>0){
+				String subInt = format.substring(0, format.length()-2);
+				String subFloat = format.substring(format.length()-2);
+				response = subInt+"."+subFloat;
+			}else{
+				response = "0.00";
+			}
+		}else{
+			response = "0.00";
+		}
+		return "00"+response+"%";
 	}
 	
 	/*

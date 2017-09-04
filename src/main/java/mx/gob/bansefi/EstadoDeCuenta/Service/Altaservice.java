@@ -14,9 +14,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import mx.gob.bansefi.EstadoDeCuenta.DB.ManejoDB;
-import mx.gob.bansefi.EstadoDeCuenta.dto.EstadoDeCuentaDTO;
+import mx.gob.bansefi.EstadoDeCuenta.dto.RequestAltaDTO;
 import mx.gob.bansefi.EstadoDeCuenta.dto.ResponseDTO;
-import mx.gob.bansefi.EstadoDeCuenta.dto.DatosCredito.DatosCreditoDTO;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
@@ -39,6 +38,8 @@ public class Altaservice {
 	 */
 	@Value("${msj.error.general.errorServicioCliente}")
 	private String urlErrorServicioCliente;
+	@Value("${url.File.Jasper.Name}")
+	private String urlFileJasperName;
 
 	DataSource dataSource = null;
 	ByteArrayOutputStream out = null;
@@ -54,32 +55,26 @@ public class Altaservice {
 	 * del sat.
 	 */
 	@Async
-	public ResponseDTO generacionReporte(EstadoDeCuentaDTO request) {
+	public ResponseDTO generacionReporte(RequestAltaDTO request) {
 		if (this.dataSource == null) {
 			dataSource = manejodb.getDataSource();
 		}
-		DatosCreditoDTO datosCred = request.getResDatosCredito().getDatosCredito();
-		datosCred.setTIPOCTA(request.getResDatosGral().getPRODUCTO());
-		datosCred.setRFC(request.getResDatosGral().getRFC());
 		ResponseDTO res = new ResponseDTO();
-		List<DatosCreditoDTO> lista = new ArrayList<DatosCreditoDTO>();
-		lista.add(datosCred);
-
+		List<RequestAltaDTO> lista = new ArrayList<RequestAltaDTO>();
+		lista.add(request);
 		Map<String, Object> parametros = new HashMap<String, Object>();
 		parametros.put("operaciones", null);
-		String id = request.getResDatosCredito().getDatosCredito().getCREDITO()+"_"
-				+ request.getResDatosCredito().getDatosCredito().getFECHA_FINAL().replaceAll("/", "");
-		String fechaInicio = request.getResDatosCredito().getDatosCredito().getFECHA_INCIAL();
-		String fechaFin = request.getResDatosCredito().getDatosCredito().getFECHA_FINAL();
-		String nomArch = request.getResDatosCredito().getDatosCredito().getCREDITO() + "_"
-				+ request.getResDatosCredito().getDatosCredito().getNOMBRETO().replaceAll(" ", "") + "_"
-				+ request.getResDatosCredito().getDatosCredito().getFECHA_FINAL().replaceAll("/", "_") + ".pdf";
-
+		String numSecAc = request.getCREDITO() +"_" + request.getFECHA_FINAL().replaceAll("/", "");
+		String fechaInicio = request.getFECHA_INCIAL();
+		String fechaFin = request.getFECHA_FINAL();
+		String nomArch = request.getCREDITO() + "_" + request.getNOMBRETO().replaceAll(" ", "") + "_"
+				+ request.getFECHA_FINAL().replaceAll("/", "_") + ".pdf";
+		
 		try {
 			Connection con = dataSource.getConnection();
-			res = manejodb.getPDFData(con, "2012_12_03", "2013_02_03", nomArch);
+			res = manejodb.getPDFData(con, numSecAc, request.getFechaDesde(), request.getFechaHasta(), nomArch);
 			if (res.getMensajeInterno().equals("Vacio")) {
-				JasperReport jasperReport = (JasperReport) JRLoader.loadObjectFromFile("EstadoDeCuenta.jasper");
+				JasperReport jasperReport = (JasperReport) JRLoader.loadObjectFromFile(urlFileJasperName);
 				JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parametros,
 						new JRBeanCollectionDataSource(lista));
 				out.reset();
@@ -87,12 +82,11 @@ public class Altaservice {
 
 				res.setArchivo(out.toByteArray());
 				JasperExportManager.exportReportToPdfFile(jasperPrint, nomArch);
-				res.setMensajeInterno(manejodb.insertPDF(con, id, fechaInicio, fechaFin, res.getArchivo()));
+				res.setMensajeInterno(manejodb.insertPDF(con, numSecAc, fechaInicio, fechaFin, res.getArchivo(), request.getUsuario(), request.getTerminal(), 1));
 				con.close();
 			} else {
 				if (res.getMensajeInterno().equals("El query no cumple con los requerimientos de la tabla")) {
 					res.setStatus("0");
-					return res;
 				}
 			}
 
@@ -101,6 +95,5 @@ public class Altaservice {
 			res.setMensajeInterno("Errores:" + e.getMessage());
 		}
 		return res;
-
 	}
 }
