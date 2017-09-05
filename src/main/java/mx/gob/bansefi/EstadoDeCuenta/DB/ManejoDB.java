@@ -88,7 +88,7 @@ public class ManejoDB {
 		String query;
 		String message = "";
 		PreparedStatement pstmt;
-		System.out.println("Hace insercion" + archivo.length);
+		System.out.println("Hace insercion: " + archivo.length);
 
 		try {
 			byte[] insercion = util.comprimir(archivo);
@@ -148,7 +148,6 @@ public class ManejoDB {
 			} else {
 				res.setMensajeInterno("El query no cumple con los requerimientos de la tabla");
 			}
-
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

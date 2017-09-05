@@ -59,27 +59,26 @@ public class Altaservice {
 		if (this.dataSource == null) {
 			dataSource = manejodb.getDataSource();
 		}
+		ResponseDTO response = new ResponseDTO();
 		ResponseDTO res = new ResponseDTO();
 		List<RequestAltaDTO> lista = new ArrayList<RequestAltaDTO>();
 		lista.add(request);
 		Map<String, Object> parametros = new HashMap<String, Object>();
 		parametros.put("operaciones", null);
-		String numSecAc = request.getCREDITO() +"_" + request.getFECHA_FINAL().replaceAll("/", "");
-		String fechaInicio = request.getFECHA_INCIAL();
-		String fechaFin = request.getFECHA_FINAL();
+		String numSecAc = request.getCREDITO() +"_" + request.getFECHA_FINAL().replaceAll("/", "-");
+		String fechaInicio = request.getFECHA_INCIAL().replaceAll("/", "-");
+		String fechaFin = request.getFECHA_FINAL().replaceAll("/", "-");
 		String nomArch = request.getCREDITO() + "_" + request.getNOMBRETO().replaceAll(" ", "") + "_"
-				+ request.getFECHA_FINAL().replaceAll("/", "_") + ".pdf";
+				+ request.getFECHA_FINAL().replaceAll("/", "-") + ".pdf";
 		
 		try {
 			Connection con = dataSource.getConnection();
-			res = manejodb.getPDFData(con, numSecAc, request.getFechaDesde(), request.getFechaHasta(), nomArch);
+			res = manejodb.getPDFData(con, numSecAc, fechaInicio, fechaFin, nomArch);
 			if (res.getMensajeInterno().equals("Vacio")) {
 				JasperReport jasperReport = (JasperReport) JRLoader.loadObjectFromFile(urlFileJasperName);
-				JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parametros,
-						new JRBeanCollectionDataSource(lista));
+				JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parametros, new JRBeanCollectionDataSource(lista));
 				out.reset();
 				JasperExportManager.exportReportToPdfStream(jasperPrint, out);
-
 				res.setArchivo(out.toByteArray());
 				JasperExportManager.exportReportToPdfFile(jasperPrint, nomArch);
 				res.setMensajeInterno(manejodb.insertPDF(con, numSecAc, fechaInicio, fechaFin, res.getArchivo(), request.getUsuario(), request.getTerminal(), 1));
@@ -94,6 +93,6 @@ public class Altaservice {
 			// TODO Auto-generated catch block
 			res.setMensajeInterno("Errores:" + e.getMessage());
 		}
-		return res;
+		return response;
 	}
 }

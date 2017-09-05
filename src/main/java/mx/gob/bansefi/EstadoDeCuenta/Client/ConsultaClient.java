@@ -41,6 +41,9 @@ public class ConsultaClient {
 		ResDatosGralDTO response = new ResDatosGralDTO();
 		ResAperturaPuestoDTO apePuesto = new ResAperturaPuestoDTO();
 		CatalogoDatosGralDTO catalogoDatosGral = new CatalogoDatosGralDTO();
+		DatosGralDTO datosGral = new DatosGralDTO();
+		ArrayList<DatosGralDTO> lista = new ArrayList<DatosGralDTO>();
+		
 		try {
 			String jsonRes = this.util.callRestPost(request, rootContext + urlConsultaDatosGenerales);
 			if (!jsonRes.equals("")) {
@@ -155,7 +158,6 @@ public class ConsultaClient {
 							datosCredito.setDisLineaDeCred((datosCredito.getDisLineaDeCred()==null) ? "" : "");
 							datosCredito.setTotalPagar((datosCredito.getTotalPagar()==null)? "" : "");
 							datosCredito.setFechaLimite((datosCredito.getFechaLimite()==null) ? "" : "");
-							
 							listadatosCredito.add(datosCredito);
 						}
 						response.setDatosCredito(listadatosCredito);
