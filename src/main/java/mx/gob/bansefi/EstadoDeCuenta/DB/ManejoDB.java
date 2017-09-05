@@ -142,6 +142,7 @@ public class ManejoDB {
 					targetFile.close();
 					res.setArchivo(fileBytes);
 					res.setMensajeInterno("Encontrado");
+					res.setStatus("1");
 				} else {
 					res.setMensajeInterno("Vacio");
 				}

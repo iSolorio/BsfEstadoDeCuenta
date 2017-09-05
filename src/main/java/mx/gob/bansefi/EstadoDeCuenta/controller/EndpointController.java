@@ -1,5 +1,7 @@
 package mx.gob.bansefi.EstadoDeCuenta.controller;
 
+import java.util.concurrent.Future;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,7 +27,7 @@ public class EndpointController {
 	 */
 	@Autowired
 	private ConsultaService consultaService;
-	@Autowired
+	@Autowired //or @Inject
 	private Altaservice altaservice;
 	
 	/*
@@ -49,7 +51,7 @@ public class EndpointController {
 	 */
 	@RequestMapping(value = "consultaAltaEdoCuenta", method = RequestMethod.POST)
 	public ResponseDTO consultaAltaEdoCuenta(@RequestBody RequestAltaDTO request) {
+			
 			return altaservice.generacionReporte(request);
-
 	}
 }

@@ -2,6 +2,7 @@ package mx.gob.bansefi.EstadoDeCuenta.Service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.stereotype.Service;
 
 import mx.gob.bansefi.EstadoDeCuenta.Client.ConsultaClient;
@@ -12,9 +13,11 @@ import mx.gob.bansefi.EstadoDeCuenta.dto.RequestGralDTO;
 import mx.gob.bansefi.EstadoDeCuenta.dto.ResponseDTO;
 import mx.gob.bansefi.EstadoDeCuenta.dto.DatosCredito.ReqDatosCreditoDTO;
 import mx.gob.bansefi.EstadoDeCuenta.dto.DatosCredito.ResDatosCreditoDTO;
+import mx.gob.bansefi.EstadoDeCuenta.dto.DatosGral.CatalogoDatosGralDTO;
 import mx.gob.bansefi.EstadoDeCuenta.dto.DatosGral.ReqDatosGralDTO;
 import mx.gob.bansefi.EstadoDeCuenta.dto.DatosGral.ResDatosGralDTO;
 import mx.gob.bansefi.EstadoDeCuenta.dto.Login.LoginDTO;
+import mx.gob.bansefi.EstadoDeCuenta.dto.Login.ResAperturaPuestoDTO;
 import mx.gob.bansefi.EstadoDeCuenta.dto.Logon.ResLogonDTO;
 
 @Service
@@ -24,7 +27,7 @@ public class ConsultaService {
 	 */
 	@Autowired
 	private ConsultaClient consultaClient;
-	@Autowired
+	@Autowired//or @Inject
 	private Altaservice altaservice;
 	@Autowired
 	private LoginService loginService;
@@ -72,12 +75,16 @@ public class ConsultaService {
 					datosGral.setPassword((urlTcbPassword == null) ? "" : urlTcbPassword);
 					response = principalConsulta(datosGral);
 				} else {
-					//response.setResDatosGral();
-					//response.setMensajeInterno(urlErrorServicioCliente + "public ResLogonDTO login(LoginDTO loginDTO)");
+					ResAperturaPuestoDTO mensaje= new ResAperturaPuestoDTO();
+					mensaje.setMENSAJE("Ocurrio un error ");
+					response.setDatos(mensaje);
 				}
 			}
 		} catch (Exception e) {
-
+			CatalogoDatosGralDTO catalogos = new CatalogoDatosGralDTO();
+			ResAperturaPuestoDTO mensaje= new ResAperturaPuestoDTO();
+			mensaje.setMENSAJE("Ocurrio un error :"+e.getMessage());
+			response.setDatos(mensaje);
 		}
 		return response;
 	}

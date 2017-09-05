@@ -203,6 +203,12 @@ public class RequestAltaDTO {
 	@Getter 
 	@Setter
 	private String numSecAc;
+	@Getter 
+	@Setter
+	private String fechaDesde;
+	@Getter 
+	@Setter
+	private String fechaHasta;
 	@Getter
 	@Setter
 	private String usuario;

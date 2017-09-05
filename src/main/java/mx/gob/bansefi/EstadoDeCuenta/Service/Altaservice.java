@@ -7,11 +7,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Future;
+
 import mx.gob.bansefi.EstadoDeCuenta.utils.Util;
 import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.AsyncResult;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import mx.gob.bansefi.EstadoDeCuenta.DB.ManejoDB;
 import mx.gob.bansefi.EstadoDeCuenta.dto.RequestAltaDTO;
@@ -25,8 +29,8 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.engine.util.JRLoader;
 
 @Service
-public class Altaservice {
-	/*
+public class Altaservice  {
+/*
 	 * Inyeccion de dependencias
 	 */
 	@Autowired
@@ -54,8 +58,8 @@ public class Altaservice {
 	 * en caso de no encontrarlo hace un alta de estado de cuenta con el timbre
 	 * del sat.
 	 */
-	@Async
-	public ResponseDTO generacionReporte(RequestAltaDTO request) {
+	
+	public ResponseDTO generacionReporte(RequestAltaDTO request)  {
 		if (this.dataSource == null) {
 			dataSource = manejodb.getDataSource();
 		}
@@ -82,17 +86,20 @@ public class Altaservice {
 				res.setArchivo(out.toByteArray());
 				JasperExportManager.exportReportToPdfFile(jasperPrint, nomArch);
 				res.setMensajeInterno(manejodb.insertPDF(con, numSecAc, fechaInicio, fechaFin, res.getArchivo(), request.getUsuario(), request.getTerminal(), 1));
-				con.close();
+				
 			} else {
 				if (res.getMensajeInterno().equals("El query no cumple con los requerimientos de la tabla")) {
 					res.setStatus("0");
 				}
+				
 			}
-
+			con.close();
 		} catch (JRException | SQLException e) {
 			// TODO Auto-generated catch block
 			res.setMensajeInterno("Errores:" + e.getMessage());
 		}
-		return response;
+		System.out.println("SS");
+		
+		return res;
 	}
 }

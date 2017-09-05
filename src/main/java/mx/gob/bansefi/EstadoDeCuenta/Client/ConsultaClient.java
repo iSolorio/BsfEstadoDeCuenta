@@ -33,7 +33,8 @@ public class ConsultaClient {
 	private String urlConsultaCredito;
 	@Value("${msj.error.general.errorServicioCliente}")
 	private String urlErrorServicioCliente;
-
+	@Value("${recurrencia.credito}")
+	private String recurrenciacredito;
 	/*
 	 * Metodo para consultar datos generales
 	 */
@@ -43,6 +44,7 @@ public class ConsultaClient {
 		CatalogoDatosGralDTO catalogoDatosGral = new CatalogoDatosGralDTO();
 		DatosGralDTO datosGral = new DatosGralDTO();
 		ArrayList<DatosGralDTO> lista = new ArrayList<DatosGralDTO>();
+		ArrayList<DatosGralDTO> comp = new ArrayList<DatosGralDTO>();
 		
 		try {
 			String jsonRes = this.util.callRestPost(request, rootContext + urlConsultaDatosGenerales);
@@ -68,6 +70,27 @@ public class ConsultaClient {
 		} catch (org.json.simple.parser.ParseException e) {
 			e.printStackTrace();
 		}
+		for(int i=0;i<response.getCreditos().getResponseBansefi().size();i++)
+		{
+			String producto=response.getCreditos().getResponseBansefi().get(i).getPRODUCTO().trim();
+			recurrenciacredito=recurrenciacredito.trim();
+			if(producto.equals(recurrenciacredito)==false)
+			{
+				
+				response.getCreditos().getResponseBansefi().remove(i);
+				i--;
+			}
+			else
+			{
+				
+				
+				comp.add(response.getCreditos().getResponseBansefi().get(i));
+			}
+		}
+		CatalogoDatosGralDTO masAhorro = new CatalogoDatosGralDTO();
+		masAhorro.setResponseBansefi(comp);
+		response.setCreditos(masAhorro);
+		
 		return response;
 	}
 
