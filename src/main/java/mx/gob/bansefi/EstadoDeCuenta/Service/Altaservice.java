@@ -69,6 +69,7 @@ public class Altaservice  {
 		lista.add(request);
 		Map<String, Object> parametros = new HashMap<String, Object>();
 		parametros.put("operaciones", null);
+		parametros.put("nombre", request.getNOMBRETO());
 		String numSecAc = request.getCREDITO() +"_" + request.getFECHA_FINAL().replaceAll("/", "-");
 		String fechaInicio = request.getFECHA_INCIAL().replaceAll("/", "-");
 		String fechaFin = request.getFECHA_FINAL().replaceAll("/", "-");
@@ -76,6 +77,7 @@ public class Altaservice  {
 				+ request.getFECHA_FINAL().replaceAll("/", "-") + ".pdf";
 		
 		try {
+			
 			Connection con = dataSource.getConnection();
 			res = manejodb.getPDFData(con, numSecAc, fechaInicio, fechaFin, nomArch);
 			if (res.getMensajeInterno().equals("Vacio")) {
@@ -96,6 +98,7 @@ public class Altaservice  {
 			con.close();
 		} catch (JRException | SQLException e) {
 			// TODO Auto-generated catch block
+			e.printStackTrace();
 			res.setMensajeInterno("Errores:" + e.getMessage());
 		}
 		System.out.println("SS");
