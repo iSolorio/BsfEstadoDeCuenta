@@ -1,6 +1,12 @@
 package mx.gob.bansefi.EstadoDeCuenta.Client;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -103,7 +109,17 @@ public class ConsultaClient {
 		ArrayList<DatosCreditoDTO> listadatosCredito = new ArrayList<DatosCreditoDTO>();
 		CatalogoDatosCreditoDTO catalogo = new CatalogoDatosCreditoDTO();
 		DatosCreditoDTO datosCredito = new DatosCreditoDTO();
-		
+		DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+		Date fecha = Calendar.getInstance().getTime();
+        String today = formatter.format(fecha);
+        System.out.println("Today : " + today);
+        Date periodo=null;
+        int difano=0;
+        int difmes=0;
+        int difdia=0;
+        Calendar hoy = Calendar.getInstance();
+        Calendar periodofecha = Calendar.getInstance();
+        hoy.setTime(fecha);
 		try {
 			String jsonRes = this.util.callRestPost(request, rootContext + urlConsultaCredito);
 			String cadena = jsonRes.replaceAll("-", "_");
@@ -119,6 +135,14 @@ public class ConsultaClient {
 					int tamanoLista = catalogo.getResponseBansefi().size();
 					if(tamanoLista > 0){
 						for(int i = 0; i < catalogo.getResponseBansefi().size();i++){
+							
+							periodo=formatter.parse((util.replace(catalogo.getResponseBansefi().get(i).getFECHA_INCIAL().replaceAll("_", "/"))));
+							periodofecha.setTime(periodo);
+							difano=hoy.get(Calendar.YEAR)-periodofecha.get(Calendar.YEAR);
+							difmes=hoy.get(Calendar.MONTH)-periodofecha.get(Calendar.MONTH);
+							difdia=hoy.get(Calendar.DAY_OF_MONTH)-periodofecha.get(Calendar.DAY_OF_MONTH);
+							System.out.println((catalogo.getResponseBansefi().get(i).getFECHA_INCIAL().replaceAll("_", "/")));
+							System.out.println("fecha hoy:"+fecha+"..."+"periodo:"+periodo);
 							datosCredito = catalogo.getResponseBansefi().get(i);
 							datosCredito.setCAPITAL((catalogo.getResponseBansefi().get(i).getCAPITAL() == null) ? "" : util.formatoCant(catalogo.getResponseBansefi().get(i).getCAPITAL()));
 							datosCredito.setCAPITAL_VENCIDO((catalogo.getResponseBansefi().get(i).getCAPITAL_VENCIDO() == null) ? "" : util.formatoCant(catalogo.getResponseBansefi().get(i).getCAPITAL_VENCIDO()));
@@ -198,8 +222,10 @@ public class ConsultaClient {
 				apePuesto.setMENSAJE(urlErrorServicioCliente
 						+ "public ResDatosCreditoDTO consultaDatosCredito(ReqDatosCreditoDTO request)");
 			}
-		} catch (org.json.simple.parser.ParseException e) {
+		} catch (org.json.simple.parser.ParseException | ParseException e) {
 			e.printStackTrace();
+			apePuesto.setESTATUS(-1l);
+			apePuesto.setMENSAJE(urlErrorServicioCliente+e.getMessage());
 		}
 		return response;
 	}
