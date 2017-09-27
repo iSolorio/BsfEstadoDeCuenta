@@ -11,7 +11,7 @@ public class ResLogonDTO {
 	@Getter @Setter
     private String TRANID;
     @Getter @Setter
-    private Integer ESTATUS;
+    private	String ESTATUS;
     @Getter @Setter
     private String CODIGO;
     @Getter @Setter

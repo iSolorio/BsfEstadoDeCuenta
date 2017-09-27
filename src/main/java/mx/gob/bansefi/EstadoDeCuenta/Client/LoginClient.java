@@ -31,6 +31,18 @@ public class LoginClient {
 	private String urlLoginLogofnsf;
 	@Value("${rest.uri.wsBsfPlataformaPrincipal.login.aperturaPuesto}")
 	private String urlLoginAperturaPuesto;
+	@Value("${msj.error.login}")
+	private String msjErrorLogin;
+	@Value("${msj.error.status}")
+	private String msjErrorStatus;
+	@Value("${status.correcto}")
+	private String statusCorrecto;
+	@Value("${tcb.EjecutarResult}")
+	private String ejecutarResult;
+	@Value("${tcb.EjecutarResponse}")
+	private String ejecutarResponse;
+	@Value("${tcb.ResponseBansefi}")
+	private String responseBansefi;
 	/*
 	 * Inyeccion de loginClient.
 	 */
@@ -40,6 +52,7 @@ public class LoginClient {
 	 * Metodo para consumir servicio Logon de RACF y obtener permisos del
 	 * usuario.
 	 */
+	@SuppressWarnings("unchecked")
 	public ResLogonDTO logon(ReqLogonDTO req) {
 		ResLogonDTO res = null;
 		try {
@@ -47,11 +60,11 @@ public class LoginClient {
 			res = new ResLogonDTO();
 			if (!jsonRes.equals("")) {
 				ArrayList<String> nodos = new ArrayList<String>();
-				nodos.add("EjecutarResponse");
-				nodos.add("EjecutarResult");
+				nodos.add(ejecutarResponse);
+				nodos.add(ejecutarResult);
 				res = (ResLogonDTO) this.util.jsonToObject(res, jsonRes, nodos);
-				if (res.getESTATUS() == 0) {
-					nodos.add("ResponseBansefi");
+				if (res.getESTATUS().equals(statusCorrecto)) {
+					nodos.add(responseBansefi);
 					CatalogoUsuarioDTO catalogo = new CatalogoUsuarioDTO(); 
                 	Usuario usuario = new Usuario();
                 	catalogo = (CatalogoUsuarioDTO) this.util.jsonToObject(catalogo, jsonRes, nodos);
@@ -63,8 +76,8 @@ public class LoginClient {
                 	res.setUsuario(usuario);
 				}
 			} else {
-				res.setESTATUS(-1);
-				res.setMENSAJE("Ocurrio un error al consumir el servicio|logon(ReqLogonDTO req)");
+				res.setESTATUS(msjErrorStatus);
+				res.setMENSAJE(msjErrorLogin);
 			}
 		} catch (ParseException ex) {
 			ex.printStackTrace();
@@ -82,8 +95,8 @@ public class LoginClient {
 			res = new ResAperturaPuestoDTO();
 			if (!jsonRes.equals("")) {
 				ArrayList<String> nodos = new ArrayList<String>();
-				nodos.add("EjecutarResponse");
-				nodos.add("EjecutarResult");
+				nodos.add(ejecutarResponse);
+				nodos.add("");
 
 				/*
 				 * Se genera manualmente el DTO de response debido a que son
@@ -104,7 +117,7 @@ public class LoginClient {
 				res.setTRANID((String) jsonObject.get("TRANID"));
 			} else {
 				res.setESTATUS(-1l);
-				res.setMENSAJE("Ocurrio un error al consumir el servicio|aperturaPuesto(ReqAperturaPuestoDTO req)");
+				res.setMENSAJE(msjErrorLogin);
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();

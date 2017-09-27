@@ -128,6 +128,7 @@ public class ManejoDB {
 		try {
 			if (StringUtils.countOccurrencesOf(query, "?") == 3) {
 				PreparedStatement state;
+				System.out.println("entra");
 				state = conn.prepareStatement(query);
 				//state = conn.prepareStatement(query);
 				state.setString(1, numSecAc);

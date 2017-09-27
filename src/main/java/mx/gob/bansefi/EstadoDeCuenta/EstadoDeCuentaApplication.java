@@ -15,7 +15,6 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 @SpringBootApplication
 @EnableAsync
 @EnableAutoConfiguration
-
 public class EstadoDeCuentaApplication {
 	
 

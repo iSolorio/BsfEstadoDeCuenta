@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import mx.gob.bansefi.EstadoDeCuenta.DB.ManejoDB;
 import mx.gob.bansefi.EstadoDeCuenta.dto.RequestAltaDTO;
 import mx.gob.bansefi.EstadoDeCuenta.dto.ResponseDTO;
+import mx.gob.bansefi.EstadoDeCuenta.dto.DatosCredito.DatosCreditoDTO;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
@@ -44,6 +45,10 @@ public class Altaservice  {
 	private String urlErrorServicioCliente;
 	@Value("${url.File.Jasper.Name}")
 	private String urlFileJasperName;
+	@Value("${tcb.Username}")
+	private String tcbUserName;
+	@Value("${tcb.Password}")
+	private String tcbPassword;
 
 	DataSource dataSource = null;
 	ByteArrayOutputStream out = null;
@@ -104,5 +109,51 @@ public class Altaservice  {
 		System.out.println("SS");
 		
 		return res;
+	}
+	public void generacionReporte(DatosCreditoDTO request)  {
+		if (this.dataSource == null) {
+			dataSource = manejodb.getDataSource();
+		}
+		ResponseDTO response = new ResponseDTO();
+		ResponseDTO res = new ResponseDTO();
+		List<DatosCreditoDTO> lista = new ArrayList<DatosCreditoDTO>();
+		lista.add(request);
+		Map<String, Object> parametros = new HashMap<String, Object>();
+		parametros.put("operaciones", null);
+		parametros.put("nombre", request.getNOMBRETO());
+		String numSecAc = request.getCREDITO() +"_" + request.getFECHA_FINAL().replaceAll("/", "-");
+		String fechaInicio = request.getFECHA_INCIAL().replaceAll("/", "-");
+		String fechaFin = request.getFECHA_FINAL().replaceAll("/", "-");
+		String nomArch = request.getCREDITO() + "_" + request.getNOMBRETO().replaceAll(" ", "") + "_"
+				+ request.getFECHA_FINAL().replaceAll("/", "-") + ".pdf";
+		
+		try {
+			
+			Connection con = dataSource.getConnection();
+			res = manejodb.getPDFData(con, numSecAc, fechaInicio, fechaFin, nomArch);
+			if (res.getMensajeInterno().equals("Vacio")) {
+				JasperReport jasperReport = (JasperReport) JRLoader.loadObjectFromFile(urlFileJasperName);
+				JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parametros, new JRBeanCollectionDataSource(lista));
+				out.reset();
+				JasperExportManager.exportReportToPdfStream(jasperPrint, out);
+				res.setArchivo(out.toByteArray());
+				JasperExportManager.exportReportToPdfFile(jasperPrint, nomArch);
+				res.setMensajeInterno(manejodb.insertPDF(con, numSecAc, fechaInicio, fechaFin, res.getArchivo(), tcbUserName, tcbPassword, 1));
+				
+			} else {
+				if (res.getMensajeInterno().equals("El query no cumple con los requerimientos de la tabla")) {
+					res.setStatus("0");
+				}
+				
+			}
+			con.close();
+		} catch (JRException | SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			res.setMensajeInterno("Errores:" + e.getMessage());
+		}
+		System.out.println("SS");
+		
+		
 	}
 }

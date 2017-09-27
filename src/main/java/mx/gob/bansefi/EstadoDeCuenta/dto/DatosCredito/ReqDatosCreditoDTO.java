@@ -1,6 +1,8 @@
 package mx.gob.bansefi.EstadoDeCuenta.dto.DatosCredito;
 
 import lombok.AllArgsConstructor;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

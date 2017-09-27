@@ -18,6 +18,7 @@ import mx.gob.bansefi.EstadoDeCuenta.dto.DatosCredito.ReqDatosCreditoDTO;
 import mx.gob.bansefi.EstadoDeCuenta.dto.DatosCredito.ResDatosCreditoDTO;
 import mx.gob.bansefi.EstadoDeCuenta.dto.DatosGral.ReqDatosGralDTO;
 import mx.gob.bansefi.EstadoDeCuenta.dto.DatosGral.ResDatosGralDTO;
+import mx.gob.bansefi.EstadoDeCuenta.dto.batch.ReqBatchDTO;
 
 @RequestMapping("")
 @RestController
@@ -51,7 +52,11 @@ public class EndpointController {
 	 */
 	@RequestMapping(value = "consultaAltaEdoCuenta", method = RequestMethod.POST)
 	public ResponseDTO consultaAltaEdoCuenta(@RequestBody RequestAltaDTO request) {
-			
 			return altaservice.generacionReporte(request);
+	}
+	@RequestMapping(value="batch",method=RequestMethod.POST)
+	public void batch(/*@RequestBody*/ ReqBatchDTO request)
+	{
+		consultaService.batch(null);
 	}
 }

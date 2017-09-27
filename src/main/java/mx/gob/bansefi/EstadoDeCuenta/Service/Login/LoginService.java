@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -29,13 +30,21 @@ public class LoginService {
 	private LoginClient loginClient;
 	@Autowired
 	private Util util;
+	@Value("${login.ip}")
+	private String loginIp;
+	@Value("${login.status}")
+	private String loginStatus;
+	@Value("${msj.error.login}")
+	private String msjErrorLogin;
+	@Value("${msj.error.status}")
+	private String msjErrorStatus;
 	
 	public ResLogonDTO login(LoginDTO loginDTO) {
 		/*
 		 * Consume servicio Logon para obtener el usuario ingresado
 		 */
 		ResLogonDTO response =  new ResLogonDTO();
-		LogonDTO logonDTO = new LogonDTO(loginDTO.getUsername(), loginDTO.getPassword(), "", "127.0.0.1", "S");
+		LogonDTO logonDTO = new LogonDTO(loginDTO.getUsername(), loginDTO.getPassword(), "", loginIp, loginStatus);
 		ReqLogonDTO reqLogon = new ReqLogonDTO(logonDTO);
 		ResLogonDTO resLogon = loginClient.logon(reqLogon);
 
@@ -49,8 +58,8 @@ public class LoginService {
 				if(resAperturaPuesto != null && resAperturaPuesto.getESTATUS() == 0){
 					response = resLogon;
 				}else{
-					response.setESTATUS(-1);
-					response.setMENSAJE("Ocurrio un error al consumir el servicio|public ResLogonDTO login(LoginDTO loginDTO)");
+					response.setESTATUS(msjErrorStatus);
+					response.setMENSAJE(msjErrorLogin);
 				}
 			}
 		}catch(Exception e){
