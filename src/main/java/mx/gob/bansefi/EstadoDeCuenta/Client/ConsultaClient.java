@@ -51,7 +51,6 @@ public class ConsultaClient {
 		DatosGralDTO datosGral = new DatosGralDTO();
 		ArrayList<DatosGralDTO> lista = new ArrayList<DatosGralDTO>();
 		ArrayList<DatosGralDTO> comp = new ArrayList<DatosGralDTO>();
-		
 		try {
 			String jsonRes = this.util.callRestPost(request, rootContext + urlConsultaDatosGenerales);
 			if (!jsonRes.equals("")) {

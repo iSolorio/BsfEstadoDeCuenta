@@ -5,6 +5,10 @@ import java.io.OutputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.Objects;
+
 import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,6 +17,12 @@ import org.springframework.util.StringUtils;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import mx.gob.bansefi.EstadoDeCuenta.dto.ResponseDTO;
+import mx.gob.bansefi.EstadoDeCuenta.dto.DB.ReqInsercionDTO;
+import mx.gob.bansefi.EstadoDeCuenta.dto.DB.ReqSeleccionDTO;
+import mx.gob.bansefi.EstadoDeCuenta.dto.DB.ResInsercionDTO;
+import mx.gob.bansefi.EstadoDeCuenta.dto.DB.ResSeleccionDTO;
+import mx.gob.bansefi.EstadoDeCuenta.dto.DB.EstadoCuentaDTO;
+import mx.gob.bansefi.EstadoDeCuenta.dto.DB.ReporteDTO;
 import mx.gob.bansefi.EstadoDeCuenta.utils.Util;
 
 @Component
@@ -20,6 +30,7 @@ public class ManejoDB {
 	/*
 	 * Inyeccion de dependencias
 	 */
+	@SuppressWarnings("rawtypes")
 	@Autowired
 	private Util util;
 	/*
@@ -39,6 +50,32 @@ public class ManejoDB {
 	private String urlQueryconsulta;
 	@Value("${database.pool}")
 	private Integer urlMaximumpoolsize;
+	@Value("${url.InsertaEstadoCuenta}")
+	private String urlInsertaEstadoCuenta;
+	@Value("${url.SeleccionEstadoCuenta}")
+	private String urlSeleccionEstadoCuenta;
+	@Value("${msj.error.bdInsercion}")
+	private String errorbdInsercion;
+	@Value("${msj.error.bdSeleccion}")
+	private String errorbdSeleccion;
+	@Value("${status.mensaje}")
+	private String statusMensaje;
+	@Value("${status.correcto}")
+	private String statusCorrecto;
+	@Value("${msj.Encontrado}")
+	private String encontrado;
+	@Value("${msj.Vacio}")
+	private String vacio;
+	@Value("${msj.error.general.errorServicioCliente}")
+	private String errorGeneral;
+	@Value("${tcb.InsertaEstadosCuentaResp}")
+	private String InsertaEstadosCuentaResp;
+	@Value("${tcb.ReporteInsertaEstadoCuenta}")
+	private String ReporteInsertaEstadoCuenta;
+	@Value("${tcb.EstadoCuenta}")
+	private String nodoEstadoCuenta;
+	@Value("${tcb.Reporte}")
+	private String Reporte;
 
 	private DataSource datasource;
 
@@ -89,7 +126,6 @@ public class ManejoDB {
 		String message = "";
 		PreparedStatement pstmt;
 		System.out.println("Hace insercion: " + archivo.length);
-
 		try {
 			byte[] insercion = util.comprimir(archivo);
 			len = archivo.length;
@@ -108,14 +144,51 @@ public class ManejoDB {
 				pstmt.setInt(8, tipo);
 				System.out.println(pstmt);
 				pstmt.executeUpdate();
-				message = "Exito en la operacion";
+				message = statusMensaje;
 
 			} else {
-				message = "El query no cumple con los requerimientos especificados en la tabla";
+				message = errorGeneral+errorbdInsercion;
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			message = "Ocurrio un error durante el guardado";
+			message =errorGeneral+errorbdInsercion;
+		}
+		return message;
+	}
+	@SuppressWarnings({ "static-access", "unchecked" })
+	public String insertPDF(String id, String fechaInicio, String fechaFin, byte[] archivo, String usuario, String terminal, int tipo) {
+		
+		String message = "";
+		String jsonResp;
+		try {
+			byte[] insercion = util.comprimir(archivo);
+			System.out.println("Hace insercion: " + insercion.length);
+			ReqInsercionDTO request= new ReqInsercionDTO(id, fechaInicio, fechaFin, insercion, "", usuario, terminal, tipo);
+			ResInsercionDTO response=new ResInsercionDTO();
+			jsonResp=util.callRestPost(request, urlInsertaEstadoCuenta);
+			if(!jsonResp.equals(""))
+			{	
+				ArrayList<String> nodos = new ArrayList<String>();
+				nodos.add(InsertaEstadosCuentaResp);
+				nodos.add(ReporteInsertaEstadoCuenta);
+				response=(ResInsercionDTO) util.jsonToObject(response, jsonResp, nodos);
+				if(response.getResultado()==1)
+				{
+					message = statusMensaje;
+				}
+				else
+				{
+					message =errorGeneral+errorbdInsercion;
+				}
+			}
+			else
+			{
+				message =errorGeneral+errorbdInsercion;
+			}
+			System.out.println("Tamaño del archivo: " + insercion.length);
+		} catch (Exception e) {
+			e.printStackTrace();
+			message =errorGeneral+errorbdInsercion;
 		}
 		return message;
 	}
@@ -142,16 +215,53 @@ public class ManejoDB {
 					targetFile.write(fileBytes);
 					targetFile.close();
 					res.setArchivo(fileBytes);
-					res.setMensajeInterno("Encontrado");
-					res.setStatus("1");
+					res.setMensajeInterno(encontrado);
+					res.setStatus(statusCorrecto);
 				} else {
-					res.setMensajeInterno("Vacio");
+					res.setMensajeInterno(vacio);
 				}
 			} else {
-				res.setMensajeInterno("El query no cumple con los requerimientos de la tabla");
+				res.setMensajeInterno(errorGeneral+errorbdSeleccion);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
+		}
+		return res;
+	}
+	@SuppressWarnings({ "unchecked", "static-access" })
+	public ResponseDTO getPDFData( String numSecAc, String fechaDesde, String fechaHasta, String nomArch) {
+		ResponseDTO res = new ResponseDTO();
+		byte[] fileBytes;
+		String jsonResp;
+		ReqSeleccionDTO request= new ReqSeleccionDTO(numSecAc, fechaDesde, fechaHasta);
+		EstadoCuentaDTO EstadoCuenta= new EstadoCuentaDTO();
+		ResSeleccionDTO response= new ResSeleccionDTO();
+		try {
+				jsonResp=util.callRestPost(request, urlSeleccionEstadoCuenta);
+				if (!jsonResp.equals("")) {
+					ArrayList<String> nodos = new ArrayList<String>();
+					nodos.add(this.nodoEstadoCuenta);
+					nodos.add(Reporte);
+					response=(ResSeleccionDTO) util.jsonToObject(response, jsonResp, nodos);//Es esta linea la que da problemas
+					if(Objects.nonNull(response.getArchivo()))
+					{
+						fileBytes = util.decomprimir(response.getArchivo().get(0));
+						OutputStream targetFile = new FileOutputStream(nomArch);
+						targetFile.write(fileBytes);
+						targetFile.close();
+						res.setArchivo(fileBytes);
+						res.setMensajeInterno(encontrado);
+						res.setStatus(statusCorrecto);
+					}
+					else {
+						res.setMensajeInterno(vacio);
+					}
+				} else {
+					res.setMensajeInterno(vacio);
+				}
+		} catch (Exception e) {
+			e.printStackTrace();
+			res.setMensajeInterno(vacio);
 		}
 		return res;
 	}

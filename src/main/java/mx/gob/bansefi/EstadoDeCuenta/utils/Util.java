@@ -37,6 +37,7 @@ public final class Util<T> {
 		JSONObject jsonObject = (JSONObject) objRes;
 		for (String nodo : nodos) {
 			jsonObject = (JSONObject) jsonObject.get(nodo);
+			System.out.println(jsonObject.toString());
 		}
 		String jsonResponse = jsonObject.toJSONString();
 		System.out.println(jsonResponse);
@@ -89,7 +90,7 @@ public final class Util<T> {
 
     /*Metodo de compresion  de  byte array para el guardado en la base de datos*/
     public static byte[] comprimir(byte[] data) throws IOException {  
-    	Deflater deflater = new Deflater();  
+    	Deflater deflater = new Deflater();
     	deflater.setInput(data);  
     	ByteArrayOutputStream outputStream = new ByteArrayOutputStream(data.length);   
     	deflater.finish();  

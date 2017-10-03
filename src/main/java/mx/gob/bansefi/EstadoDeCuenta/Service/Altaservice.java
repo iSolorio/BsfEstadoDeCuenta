@@ -49,6 +49,18 @@ public class Altaservice  {
 	private String tcbUserName;
 	@Value("${tcb.Password}")
 	private String tcbPassword;
+	@Value("${msj.error.bdInsercion}")
+	private String errorbdInsercion;
+	@Value("${msj.error.bdSeleccion}")
+	private String errorbdSeleccion;
+	@Value("${status.mensaje}")
+	private String statusMensaje;
+	@Value("${msj.error.general.errorServicioCliente}")
+	private String errorGeneral;
+	@Value("${msj.Encontrado}")
+	private String encontrado;
+	@Value("${msj.Vacio}")
+	private String vacio;
 
 	DataSource dataSource = null;
 	ByteArrayOutputStream out = null;
@@ -84,15 +96,15 @@ public class Altaservice  {
 		try {
 			
 			Connection con = dataSource.getConnection();
-			res = manejodb.getPDFData(con, numSecAc, fechaInicio, fechaFin, nomArch);
-			if (res.getMensajeInterno().equals("Vacio")) {
+			res = manejodb.getPDFData(numSecAc, fechaInicio, fechaFin, nomArch);
+			if (res.getMensajeInterno().equals(vacio)) {
 				JasperReport jasperReport = (JasperReport) JRLoader.loadObjectFromFile(urlFileJasperName);
 				JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parametros, new JRBeanCollectionDataSource(lista));
 				out.reset();
 				JasperExportManager.exportReportToPdfStream(jasperPrint, out);
 				res.setArchivo(out.toByteArray());
 				JasperExportManager.exportReportToPdfFile(jasperPrint, nomArch);
-				res.setMensajeInterno(manejodb.insertPDF(con, numSecAc, fechaInicio, fechaFin, res.getArchivo(), request.getUsuario(), request.getTerminal(), 1));
+				res.setMensajeInterno(manejodb.insertPDF(numSecAc, fechaInicio, fechaFin, res.getArchivo(), request.getUsuario(), request.getTerminal(), 1));
 				
 			} else {
 				if (res.getMensajeInterno().equals("El query no cumple con los requerimientos de la tabla")) {
@@ -104,7 +116,7 @@ public class Altaservice  {
 		} catch (JRException | SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			res.setMensajeInterno("Errores:" + e.getMessage());
+			res.setMensajeInterno(errorGeneral + e.getMessage());
 		}
 		System.out.println("SS");
 		
@@ -130,15 +142,15 @@ public class Altaservice  {
 		try {
 			
 			Connection con = dataSource.getConnection();
-			res = manejodb.getPDFData(con, numSecAc, fechaInicio, fechaFin, nomArch);
-			if (res.getMensajeInterno().equals("Vacio")) {
+			res = manejodb.getPDFData(con,numSecAc, fechaInicio, fechaFin, nomArch);
+			if (res.getMensajeInterno().equals(vacio)) {
 				JasperReport jasperReport = (JasperReport) JRLoader.loadObjectFromFile(urlFileJasperName);
 				JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parametros, new JRBeanCollectionDataSource(lista));
 				out.reset();
 				JasperExportManager.exportReportToPdfStream(jasperPrint, out);
 				res.setArchivo(out.toByteArray());
 				JasperExportManager.exportReportToPdfFile(jasperPrint, nomArch);
-				res.setMensajeInterno(manejodb.insertPDF(con, numSecAc, fechaInicio, fechaFin, res.getArchivo(), tcbUserName, tcbPassword, 1));
+				res.setMensajeInterno(manejodb.insertPDF(con,numSecAc, fechaInicio, fechaFin, res.getArchivo(), tcbUserName, tcbPassword, 1));
 				
 			} else {
 				if (res.getMensajeInterno().equals("El query no cumple con los requerimientos de la tabla")) {
